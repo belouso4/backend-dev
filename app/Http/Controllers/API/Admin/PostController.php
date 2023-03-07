@@ -125,4 +125,11 @@ class PostController extends AdminController
         return response()->json(null, 204);
 
     }
+
+    public function search(Request $request) {
+        $query = $request->query('search');
+        $posts = $this->postRepository->search($query);
+
+        return PostResource::collection($posts);
+    }
 }

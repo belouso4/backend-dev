@@ -28,6 +28,7 @@ services:
       - app
     networks:
       - api.dev-network
+
   db:
     image: mysql:8.0.25
     volumes:
@@ -35,10 +36,13 @@ services:
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_ROOT_PASSWORD: my-secret-pw
-#      MYSQL_PASSWORD: ${DB_PASSWORD}
-#      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
     ports:
       - 3306:3306
+    networks:
+      - api.dev-network
+
   mailhog:
     image: mailhog/mailhog:latest
     logging:

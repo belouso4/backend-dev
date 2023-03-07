@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CommentResource;
+use App\Http\Resources\PostCommentsResource;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Repositories\Contracts\IComment;
@@ -32,11 +34,7 @@ class PostCommentsController extends Controller
         $comments = $this->postCommentRepository
             ->getCommentsWithUser('slug',$slug, $request->get('offset'));
 
-        if ($comments) {
-            return response()->json($comments, 200);
-        } else {
-            return response()->json($comments, 500);
-        }
+        return new PostCommentsResource($comments);
     }
 
     /**
@@ -49,12 +47,7 @@ class PostCommentsController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request, Post $post)
     {
         $comment = new Comment($request->all(['body', 'parent_id']));
@@ -63,13 +56,7 @@ class PostCommentsController extends Controller
 
         $post->comments()->save($comment);
 
-        if ($comment) {
-
-            return response()->json($comment, 200);
-
-        } else {
-            return response()->json($comment, 500);
-        }
+        return new CommentResource($comment);
     }
 
     public function like(Comment $comment)

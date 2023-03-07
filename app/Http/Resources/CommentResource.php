@@ -19,7 +19,7 @@ class CommentResource extends JsonResource
         $avatar = Storage::exists($this->user->avatar) ?  '' : 'avatar/';
         return [
             'body' => $this->body,
-            'created_at' => $this->created_at,
+            'created_at' => $this->created_at->format('d/m/Y'),
             'id' => $this->id,
             'likes_count' => $this->likes_count,
             'parent_id' => $this->parent_id,

@@ -79,6 +79,14 @@ class RolesController extends AdminController
         return response()->json(null, 204);
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->query('search');
+        $roles = $this->roleRepository->search($query);
+
+        return RolesResource::collection($roles);
+    }
+
     public function permissions() {
         $permissions_row = $this->permissionRepository->all();
 
@@ -100,6 +108,10 @@ class RolesController extends AdminController
     }
 
     public function permissionUpdate(Role $role, Request $request) {
+        //it is forbidden to change the role with id 1 and permissions under id c 13-16
+        if($role->id === 1 && (13 <= $request['id']) && ($request['id'] <= 16)) {
+            abort(403, 'Запрещено изменять разрешения.');
+        }
         $request->validate([
             'id' => 'required|exists:permissions'
         ]);
@@ -112,6 +124,7 @@ class RolesController extends AdminController
 
     public function setDefaultPermissions(Role $role)
     {
+        if($role->id === 1) abort(403, 'Запрещено изменять разрешения.');
         $role->permissions()->sync([6,2,10]);
         return response()->json($role->permissions_group);
     }
@@ -119,6 +132,7 @@ class RolesController extends AdminController
 
     public function setMinimumPermissions(Role $role)
     {
+        if($role->id === 1) abort(403, 'Запрещено изменять разрешения.');
         $role->permissions()->sync([]);
         return response()->json($role->permissions_group);
     }

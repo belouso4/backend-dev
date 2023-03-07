@@ -19,7 +19,7 @@ class Post extends Model
 
     protected $hidden = ['pivot'];
 
-    protected $perPage = 10;
+    protected $perPage = 4;
 
 //    protected static function booted()
 //    {

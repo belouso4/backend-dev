@@ -65,6 +65,7 @@ class RolePolicy
      */
     public function delete(User $user, Role $role)
     {
+        if ($role->id == 1) return false;
         return $user->checkPermission('role.delete');
     }
 

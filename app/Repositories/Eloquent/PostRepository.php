@@ -62,4 +62,12 @@ class PostRepository extends BaseRepository implements IPost {
 
         return $posts;
     }
+
+    public function search($query)
+    {
+        return $this->model
+            ->where('title', 'like', "%$query%")
+            ->orderBy('created_at', 'DESC')
+            ->paginate();
+    }
 }

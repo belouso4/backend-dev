@@ -60,6 +60,7 @@ Route::group(['prefix' => 'v1'], function(){
         Route::put('/post/restore/{id}', [AdminPostController::class, 'restore']);
         Route::get('/posts/trashed', [AdminPostController::class, 'getDeletedPosts']);
         Route::delete('/posts/clear-trashed/{id}', [AdminPostController::class, 'forceDelete']);
+        Route::get('/posts/search', [AdminPostController::class, 'search']);
 
         /**
          * Admin Post Сomments Routes
@@ -107,7 +108,9 @@ Route::group(['prefix' => 'v1'], function(){
         Route::put('/role/{role}', [RolesController::class, 'update']);
         Route::delete('/role/{role}', [RolesController::class, 'destroy']);
 //        Route::get('/role/{role}/users', [RolesController::class, 'users']);
+        Route::get('/roles/search', [RolesController::class, 'search']);
     });
+
 
 
 //    Route::post('/companies','API\PostController@store');

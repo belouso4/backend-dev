@@ -25,7 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
     ];
 
-    protected $perPage = 15;
+    protected $perPage = 5;
 
     /**
      * The attributes that should be hidden for serialization.

@@ -18,6 +18,15 @@ class Comment extends Model
         'body'
     ];
 
+//    protected $dates = ['created_at'];
+
+    protected $casts = [ 'created_at'=>'datetime'];
+
+//    public function getCreatedAtAttribute($value)
+//    {
+//        return $value->format('d/m/Y');
+//    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -104,12 +104,25 @@ class UserRolesController extends AdminController
 
     public function search(Request $request)
     {
+
 //        $search = $request->query('search');
 //        $roles = Role::select(['id', 'name'])->where('name', 'like', "$search%")->get();
-        if(isset($request['search'])) {
+
+        if(isset($request['filter-list'])) {
+            $filter = $request['filter-list'];
+            $roles = Role::select(['id', 'name'])
+                ->where('name', 'like', "$filter%")
+                ->get();
+        } elseif (isset($request['search'])) {
             $search = $request['search'];
-            $roles = Role::select(['id', 'name'])->where('name', 'like', "$search%")->get();
+            $users = User::whereHas('roles')
+                ->where('name', 'like', "$search%")
+                ->with('roles')
+                ->paginate();
+
+            return UserRolesResource::collection($users);
         } elseif (isset($request['filter'])) {
+            return $request['filter'];
             $filter = $request['filter'];
             $users = User::whereHas('roles', function ($query) use ($filter) {
                 $query->whereIn('name', explode(',', $filter));

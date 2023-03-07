@@ -31,6 +31,11 @@ class RoleRepository extends BaseRepository implements IRole
             ->first();
     }
 
-
+    public function search($query)
+    {
+        return $this->model
+            ->where('name', 'like', "%$query%")
+            ->paginate();
+    }
 
 }

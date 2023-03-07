@@ -10,5 +10,5 @@ interface IPost
     public function getDeletedPosts();
     public function forceDelete($id);
     public function whereInWithTrashed($id);
-
+    public function search($query);
 }
