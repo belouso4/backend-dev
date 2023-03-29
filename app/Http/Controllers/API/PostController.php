@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Post\PostResource;
 use App\Models\Post;
 use App\Models\PostView;
 use Carbon\Carbon;
@@ -17,11 +18,7 @@ class PostController extends Controller
         $this->middleware('auth:sanctum')->only(['store', 'update', 'destroy']);
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
 
@@ -48,13 +45,8 @@ class PostController extends Controller
 //            ];
 //        });
 
-        if ($posts) {
+        return PostResource::collection($posts);
 
-            return response()->json($posts, 200);
-
-        } else {
-            return response()->json($posts, 500);
-        }
     }
 
     /**
@@ -86,10 +78,6 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-//        $post = Post::where('id', '=', $post->id)->first();
-//        if(!isset($post)) {
-//            abort(404);
-//        }
         $post = Post::where('id', '=', $post->id)
             ->where('status', '=', '1')
             ->withCount('comments')

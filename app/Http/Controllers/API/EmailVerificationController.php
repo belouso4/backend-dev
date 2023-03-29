@@ -23,9 +23,9 @@ class EmailVerificationController extends Controller
         if ( $request->route('id') == $request->user()->getKey() &&
             $request->user()->markEmailAsVerified() ) {
             event(new Verified($request->user()));
-            return response()->json( 'Email Verified' );
+            return response()->json( 'Электронная почта проверена' );
         }else{
-            return response()->json('Email failed to verify!',400);
+            return response()->json('Не удалось подтвердить электронную почту!',400);
         }
 
     }

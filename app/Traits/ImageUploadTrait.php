@@ -26,29 +26,32 @@ trait ImageUploadTrait
 
     public function uploadImage()
     {
-        $this->image->storeAs($this->folder, $this->fileName);
+        return $this->image->storeAs($this->folder, $this->fileName);
     }
 
     public function updateImage()
     {
         if($this->fileName) {
-            Storage::delete($this->folder . '/' . $this->oldImage);
-            $this->uploadImage();
+            Storage::delete($this->oldImage);
+            return $this->uploadImage();
         }
     }
 
     public function uploadAvatar()
     {
         if($this->fileName) {
-            $this->uploadImage();
+            return $this->uploadImage();
         }
     }
 
     public function updateAvatar()
     {
         if($this->fileName) {
-            Storage::delete($this->folder . '/' . $this->oldImage);
-            $this->uploadImage();
+            if ($this->oldImage != 'avatar.png') {
+                Storage::delete($this->oldImage);
+            }
+
+            return $this->uploadImage();
         }
     }
 
@@ -57,36 +60,13 @@ trait ImageUploadTrait
         $fileName = null;
 
         if($image) {
-            $replaceRuWords = $this::translit($image->getClientOriginalName(), '_');
+            $replaceRuWords = Str::slug($image->getClientOriginalName(), '_');
             $strtolower = strtolower($replaceRuWords);
             $replaceSpaces = preg_replace('/\s+/', '_', $strtolower);
             $fileName = time().'_'.$replaceSpaces;
         }
 
         return $fileName;
-    }
-
-    public static function translit($str)
-    {
-        $tr = array(
-            "А"=>"A","Б"=>"B","В"=>"V","Г"=>"G",
-            "Д"=>"D","Е"=>"E","Ж"=>"J","З"=>"Z","И"=>"I",
-            "Й"=>"Y","К"=>"K","Л"=>"L","М"=>"M","Н"=>"N",
-            "О"=>"O","П"=>"P","Р"=>"R","С"=>"S","Т"=>"T",
-            "У"=>"U","Ф"=>"F","Х"=>"H","Ц"=>"TS","Ч"=>"CH",
-            "Ш"=>"SH","Щ"=>"SCH","Ъ"=>"","Ы"=>"YI","Ь"=>"",
-            "Э"=>"E","Ю"=>"YU","Я"=>"YA","а"=>"a","б"=>"b",
-            "в"=>"v","г"=>"g","д"=>"d","е"=>"e","ж"=>"j",
-            "з"=>"z","и"=>"i","й"=>"y","к"=>"k","л"=>"l",
-            "м"=>"m","н"=>"n","о"=>"o","п"=>"p","р"=>"r",
-            "с"=>"s","т"=>"t","у"=>"u","ф"=>"f","х"=>"h",
-            "ц"=>"ts","ч"=>"ch","ш"=>"sh","щ"=>"sch","ъ"=>"y",
-            "ы"=>"yi","ь"=>"'","э"=>"e","ю"=>"yu","я"=>"ya",
-            " "=>"_","?"=>"_","/"=>"_","\\"=>"_",
-            "*"=>"_",":"=>"_","*"=>"_","\""=>"_","<"=>"_",
-            ">"=>"_","|"=>"_"
-        );
-        return strtr($str,$tr);
     }
 
 //    private function storeImage($post)

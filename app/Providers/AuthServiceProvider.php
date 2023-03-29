@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Post;
 use App\Policies\PostPolicy;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Laravel\Passport\Passport;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -32,6 +33,10 @@ class AuthServiceProvider extends ServiceProvider
 //        });
 
         $this->registerPolicies();
+
+        ResetPassword::createUrlUsing(function ($user, string $token) {
+            return env('FRONTEND_URL') . '/reset-password?token=' . $token;
+        });
 //        Passport::routes();
 
 

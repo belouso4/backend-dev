@@ -7,6 +7,7 @@ use App\Http\Requests\AdminUserUpdateRequest;
 use App\Http\Resources\Admin\User\UserResource;
 use App\Models\User;
 use App\Repositories\Contracts\IUser;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Traits\ImageUploadTrait;
 
@@ -41,16 +42,14 @@ class UsersController extends AdminController
         $user = new User($request->all());
 
         if($request->hasFile('avatar')) {
-            $folder = '/avatar';
             $file = $request->file('avatar');
-            $fileName = $this->setImage($file, $folder);
-            $user->avatar = $fileName;
+            $this->setImage($file, '/avatar');
+            $user->avatar = $this->uploadAvatar();
         }
 
         $user->save();
         $user->roles()->attach($request['role_id']);
 
-        if ($user) $this->uploadAvatar();
         return response()->json(['id' => $user->id]);
     }
 
@@ -66,17 +65,34 @@ class UsersController extends AdminController
 
     public function update(AdminUserUpdateRequest $request, User $user)
     {
-        $user->update($request->all());
+        $data = $request->all();
+
+        switch ($request['status']) {
+            case '':
+                $data['status'] = $user->status;
+                $data['banned_until'] = $user->banned_until;
+                break;
+            case 1:
+            case 0:
+                $data['status'] = $request['status'];
+                if (!is_null($user->banned_until)) $data['banned_until'] = null;
+                break;
+            default:
+                $data['status'] = 1;
+                $data['banned_until'] = $request['status'];
+                break;
+        }
+
+        $user->update($data);
         $user->roles()->sync($request['role_id']);
 
         if($request->hasFile('avatar')) {
-            $folder = '/avatar';
             $file = $request->file('avatar');
-            $user->avatar = $this->setImage($file, $folder, $user->avatar);
+            $this->setImage($file, '/avatar', $user->avatar);
+            $user->avatar = $this->updateAvatar();
             $user->save();
         }
 
-        if ($user) $this->updateAvatar();
         return response()->json(['id' => $user->id]);
     }
 

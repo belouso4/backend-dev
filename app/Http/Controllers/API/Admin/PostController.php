@@ -42,11 +42,11 @@ class PostController extends AdminController
     public function store(AdminPostCreateRequest $request)
     {
         $post = new Post($request->all());
-        $post->img = $this->setImage($request->file('img'), '/posts');
+        $this->setImage($request->file('img'), '/posts');
+        $post->img = $this->uploadImage();
 
         $post->save();
         $post->tags()->attach($request['tags']);
-        if ($post) $this->uploadImage();
 
         return response()->json($post->slug);
     }
@@ -69,16 +69,16 @@ class PostController extends AdminController
         $post->update($request->all());
 
         if($request->hasFile('img')) {
-            $post->img = $this->setImage(
+            $this->setImage(
                 $request->file('img'),
                 '/posts',
                 $post->img,
             );
+            $post->img = $this->updateImage();
             $post->save();
         }
 
         $post->tags()->sync($request['tags']);
-        if ($post) $this->updateImage();
 
         return response()->json($post->slug, 200);
     }

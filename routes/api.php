@@ -12,6 +12,8 @@ use App\Http\Controllers\API\Admin\UsersController as AdminUsersController;
 use App\Http\Controllers\API\Admin\RolesController;
 use App\Http\Controllers\API\Admin\UserRolesController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\Admin\GeneralController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 
 
 Route::group(['prefix' => 'v1'], function(){
@@ -19,12 +21,15 @@ Route::group(['prefix' => 'v1'], function(){
     /**
      * Email Routes
      */
-//    Route::post('email/verify/{id}',[EmailVerificationController::class, 'verify'])->name('verificationapi.verify');
-//    Route::post('email/resend', [EmailVerificationController::class, 'resend']);
+    Route::post('email/verify/{id}',[EmailVerificationController::class, 'verify'])->name('verificationapi.verify');
+    Route::post('email/resend', [EmailVerificationController::class, 'resend']);
 
     Route::group(['middleware' => 'guest'], function () {
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/login', [AuthController::class, 'login']);
+
+        Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+        Route::post('/reset-password', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'reset']);
     });
     /**
      * Post Routes
@@ -37,7 +42,7 @@ Route::group(['prefix' => 'v1'], function(){
 
         Route::get('/user', [UsersController::class, 'show']);
 
-        Route::put('/user/{user}', [UsersController::class, 'update']);
+        Route::put('/user/{user}', [UsersController::class, 'update'])->middleware(['verified']);
         /**
          * Auth Post Routes
          */
@@ -65,7 +70,7 @@ Route::group(['prefix' => 'v1'], function(){
         /**
          * Admin Post Сomments Routes
          */
-        Route::get('/post/{slug}/comments', [AdminPostCommentsController::class, 'index']);
+        Route::get('/post/{post}/comments', [AdminPostCommentsController::class, 'index']);
         Route::post('/post/{post}/comment', [AdminPostCommentsController::class, 'store']);
         Route::delete('/post/comment/{comment}/delete', [AdminPostCommentsController::class, 'destroy']);
         Route::post('/post/comment/{comment}/like', [AdminPostCommentsController::class, 'like']);
@@ -109,6 +114,17 @@ Route::group(['prefix' => 'v1'], function(){
         Route::delete('/role/{role}', [RolesController::class, 'destroy']);
 //        Route::get('/role/{role}/users', [RolesController::class, 'users']);
         Route::get('/roles/search', [RolesController::class, 'search']);
+
+        /**
+         * Admin General Routes
+         */
+        Route::get('/search', [GeneralController::class, 'search']);
+        Route::put('/profile', [GeneralController::class, 'profile']);
+
+        /**
+         * Admin General Routes
+         */
+        Route::post('/mail', [\App\Http\Controllers\API\Admin\MailController::class, 'store']);
     });
 
 

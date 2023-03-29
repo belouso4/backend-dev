@@ -22,12 +22,12 @@ class PostCommentsController extends AdminController
         $this->comment = app(IPostComments::class);
     }
 
-    public function index(Request $request, $slug)
+    public function index(Request $request, Post $post)
     {
         $comments = $this->comment
             ->getCommentsWithUser(
                 'slug',
-                $slug,
+                $post->slug,
                 $request->query('offset')
             );
 

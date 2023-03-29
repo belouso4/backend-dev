@@ -3,8 +3,8 @@
 namespace App\Http\Resources\Admin\Post;
 
 use App\Http\Resources\Admin\Tag\TagResource;
-use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class PostResource extends JsonResource
 {
@@ -15,10 +15,10 @@ class PostResource extends JsonResource
         return [
             'id' => $this->id,
             'slug' => $this->slug,
-            'created_at' => Carbon::parse($this->created_at)->isoFormat('DD.MM.YYYY'),
+            'created_at' => $this->created_at->format('d.m.Y'),
             'title' => $this->title,
             'desc' => $this->desc,
-            'img' => env('APP_URL'). '/storage/posts/' . $this->img,
+            'img' => Storage::url($this->img),
             'status' => $this->status,
             'tags' => TagResource::collection($this->tags),
         ];

@@ -12,3 +12,8 @@ Route::get('/db', function () {
 Route::get('/linkstorage', function () {
     Artisan::call('storage:link');
 });
+
+Route::get('/mail', function () {
+//    \Illuminate\Support\Facades\Mail::to('user@mail.ru')
+//        ->send(new \App\Mail\TestMail());
+});

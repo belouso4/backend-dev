@@ -15,8 +15,6 @@ class CommentResource extends JsonResource
      */
     public function toArray($request)
     {
-
-        $avatar = Storage::exists($this->user->avatar) ?  '' : 'avatar/';
         return [
             'body' => $this->body,
             'created_at' => $this->created_at->format('d/m/Y'),
@@ -27,7 +25,7 @@ class CommentResource extends JsonResource
             'user' => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,
-                'avatar' => env('APP_URL'). '/storage/' . $avatar . $this->user->avatar,
+                'avatar' => Storage::url($this->user->avatar) ,
             ],
             'user_id' => $this->user_id,
             'user_like_count' => $this->user_like_count

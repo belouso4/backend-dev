@@ -2,14 +2,12 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
+use App\Mail\EmailVerification;
+use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailBase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\URL;
 
-class VerifyApiEmail extends Notification
+class VerifyApiEmail extends VerifyEmailBase
 {
 
     public function toMail($notifiable)
@@ -23,8 +21,10 @@ class VerifyApiEmail extends Notification
     protected function verificationUrl($notifiable)
     {
         $prefix = env('FRONTEND_URL').'/account/verify/';
-        $temporarySignedUrl = URL::temporarySignedRoute('verificationapi.verify',
-            Carbon::now()->addMinutes(60), ['id' => $notifiable->getKey()]);
+
+        $temporarySignedUrl = URL::temporarySignedRoute(
+            'verificationapi.verify', Carbon::now()->addMinutes(60), ['id' => $notifiable->getKey()]);
+
         return $prefix . '?verify_url=' . urlencode( $temporarySignedUrl );
     }
 

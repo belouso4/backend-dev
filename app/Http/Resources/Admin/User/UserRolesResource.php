@@ -19,13 +19,11 @@ class UserRolesResource extends JsonResource
             ? $this->roles()->first()->only(['id'])
             : '';
 
-        $avatar = Storage::exists($this->avatar) ?  '' : 'avatar/';
-
         return [
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'avatar' => env('APP_URL'). '/storage/' . $avatar . $this->avatar,
+            'avatar' => Storage::url($this->avatar),
             'role' => [
                 'name' => $this->role->name,
                 'desc' => $this->role->desc,

@@ -146,15 +146,12 @@ class RolesController extends AdminController
             $pathFile = 'new_user.'.$key.'.avatar';
 
             if(request()->hasFile($pathFile)) {
-                $folder = '/avatar';
                 $file = request()->file($pathFile);
-                $fileName = $this->setImage($file, $folder);
-                $user->avatar = $fileName;
+                $this->setImage($file, '/avatar');
+                $user->avatar = $this->uploadAvatar();
             }
 
-            $this->uploadAvatar();
             $user->save();
-
             $ids[] = $user->id;
         }
         return $ids;

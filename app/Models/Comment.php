@@ -20,7 +20,7 @@ class Comment extends Model
 
 //    protected $dates = ['created_at'];
 
-    protected $casts = [ 'created_at'=>'datetime'];
+
 
 //    public function getCreatedAtAttribute($value)
 //    {

@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Notifications\ResetPasswordApi;
 use App\Traits\HasRolesAndPermissions;
+use Carbon\Carbon;
+use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -23,9 +26,23 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'banned_until',
+        'status'
     ];
 
-    protected $perPage = 5;
+    protected $dates = [
+        'banned_until'
+    ];
+
+    public function setBannedUntilAttribute($value) {
+        $this->attributes['banned_until'] = is_null($value) ? null : Carbon::parse($value);
+    }
+
+//    public function setStatusAttribute($value) {
+//        $this->attributes['status'] = $value ? 1 : 0;
+//    }
+
+    protected $perPage = 1;
 
     /**
      * The attributes that should be hidden for serialization.
@@ -62,5 +79,12 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendApiEmailVerificationNotification()
     {
         $this->notify( new VerifyApiEmail );
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $url = env('FRONTEND_URL').'/reset-password/?token='.$token;
+
+        $this->notify(new ResetPasswordApi($url));
     }
 }

@@ -30,7 +30,7 @@ class AuthController extends Controller
                 'password' => $request->get('password'),
             ]);
 
-//            $user->sendApiEmailVerificationNotification();
+            $user->sendApiEmailVerificationNotification();
 
             return response()->json('', 204 );
         }
