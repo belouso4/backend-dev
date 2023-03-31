@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -23,5 +22,7 @@ class UserSeeder extends Seeder
         $user1->password = 'secret';
         $user1->save();
         $user1->roles()->attach($superAdmin);
+
+        User::factory()->count(50)->create();
     }
 }

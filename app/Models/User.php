@@ -42,7 +42,7 @@ class User extends Authenticatable implements MustVerifyEmail
 //        $this->attributes['status'] = $value ? 1 : 0;
 //    }
 
-    protected $perPage = 1;
+    protected $perPage = 5;
 
     /**
      * The attributes that should be hidden for serialization.

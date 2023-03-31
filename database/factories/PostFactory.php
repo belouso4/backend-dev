@@ -24,11 +24,22 @@ class PostFactory extends Factory
     public function definition()
     {
         return [
-            'title' => $this->faker->name,
-            'subscription' => 0,
-            'description' => $this->faker->text( 300 ),
+            'title' => $this->faker->realTextBetween(10, 30, 3),
+//            'subscription' => 0,
+            'excerpt' => $this->faker->text( 120 ),
+            'desc' => $this->faker->realText( 2000 ),
+            'img' => '300x200.png',
         ];
     }
+
+//    public function suspended()
+//    {
+//        return $this->state(function (array $attributes) {
+//            return [
+//                'meta_keywords' => 'owner',
+//            ];
+//        });
+//    }
 
 }
 

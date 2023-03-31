@@ -70,12 +70,7 @@ class PostController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(Post $post)
     {
         $post = Post::where('id', '=', $post->id)
@@ -86,18 +81,11 @@ class PostController extends Controller
             }])
             ->first();
 
-        if ($post) {
-
-            if($post->showPost()){// this will test if the user viwed the post or not
-                return response()->json($post, 200);
-            }
-
+        if(!$post->showPost()){// this will test if the user viwed the post or not
             PostView::createViewLog($post);
-            return response()->json($post, 200);
-
-        } else {
-            return response()->json($post, 404);
         }
+
+        return new PostResource($post);
     }
 
     public function like( $slug ){
