@@ -23,7 +23,7 @@ class ResetPasswordController extends Controller
      */
     public function reset( ResetPasswordRequest $request )
     {
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', '=', $request->email)->first();
 
         $updatePassword = $this->broker()->tokenExists( $user, $request->token );
 

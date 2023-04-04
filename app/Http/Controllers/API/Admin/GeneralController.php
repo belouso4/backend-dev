@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminGeneralProfileRequest;
 use App\Http\Requests\SearchRequest;
 use App\Http\Resources\Admin\Post\PostResource;
@@ -13,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class GeneralController extends Controller
+class GeneralController extends AdminController
 {
     use ImageUploadTrait;
 

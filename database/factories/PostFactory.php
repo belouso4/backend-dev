@@ -32,14 +32,5 @@ class PostFactory extends Factory
         ];
     }
 
-//    public function suspended()
-//    {
-//        return $this->state(function (array $attributes) {
-//            return [
-//                'meta_keywords' => 'owner',
-//            ];
-//        });
-//    }
-
 }
 

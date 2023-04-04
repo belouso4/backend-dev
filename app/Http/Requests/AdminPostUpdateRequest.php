@@ -26,7 +26,7 @@ class AdminPostUpdateRequest extends FormRequest
         return [
             'title' => "required|min:3|max:255|string|unique:posts,title,$this->id",
             'desc' => 'required|min:5|string',
-            'img' => 'sometimes|images|mimes:jpeg,jpg,png,gif|max:1024', // 1 MB'
+            'img' => $this->hasFile('img') ? 'mimes:jpeg,jpg,png,gif|max:1024' : '', // 1 MB
             'status' => 'required|in:0,1',
             'tags' => 'array'
         ];

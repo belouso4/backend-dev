@@ -21,7 +21,7 @@ class TagRepository extends BaseRepository implements ITag {
     public function search($query)
     {
         return $this->model
-            ->where('name', 'like', "%$query%")
+            ->where('tag', 'like', "%$query%")
             ->paginate();
     }
 }

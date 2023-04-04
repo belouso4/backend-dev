@@ -13,7 +13,7 @@ class RoleResource extends JsonResource
     {
         return [
             'name' => $this->name,
-            'desc' => $this->desc,
+            'desc' => $this->desc ? $this->desc : '',
             'permissions_group' => $this->permissions_group,
             'users' => $this->users,
         ];

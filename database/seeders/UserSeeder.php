@@ -23,6 +23,6 @@ class UserSeeder extends Seeder
         $user1->save();
         $user1->roles()->attach($superAdmin);
 
-        User::factory()->count(50)->create();
+        User::factory()->count(30)->create();
     }
 }

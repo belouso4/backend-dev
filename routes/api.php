@@ -38,7 +38,7 @@ Route::group(['prefix' => 'v1'], function(){
     Route::get('/post/{post}',[PostController::class, 'show']);
     Route::get('/post/{slug}/comments', [PostCommentsController::class, 'index']);
 
-    Route::group(['middleware' => 'auth:sanctum'], function(){
+    Route::group(['middleware' => ['auth:sanctum']], function(){
 
         Route::get('/user', [UsersController::class, 'show']);
 

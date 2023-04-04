@@ -15,5 +15,5 @@ Route::get('/linkstorage', function () {
 
 Route::get('/mail', function () {
 //    \Illuminate\Support\Facades\Mail::to('user@mail.ru')
-//        ->send(new \App\Mail\TestMail());
+//        ->send(new \App\Mail\SendMail());
 });

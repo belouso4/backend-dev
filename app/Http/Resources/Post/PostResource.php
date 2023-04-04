@@ -10,6 +10,7 @@ class PostResource extends JsonResource
 {
     public static $wrap = '';
 
+
     public function toArray($request)
     {
         return [
@@ -23,6 +24,11 @@ class PostResource extends JsonResource
             'status' => $this->status,
             'tags' => TagResource::collection($this->tags),
             'user_like_count' => $this->user_like_count,
+            'metadata' => [
+                'title' => $this->meta_title,
+                'keywords' => $this->meta_keywords,
+                'description' => $this->meta_desc,
+            ]
         ];
     }
 }

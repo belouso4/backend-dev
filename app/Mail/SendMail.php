@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class TestMail extends Mailable
+class SendMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -15,6 +15,7 @@ class TestMail extends Mailable
     public $url = 'http://localhost:3000';
     public $name;
     public $msg;
+    private $attachment;
 
     /**
      * Create a new message instance.
@@ -26,6 +27,7 @@ class TestMail extends Mailable
         $this->name = $data['to'];
         $this->subj = $data['subject'];
         $this->msg = $data['message'];
+        $this->attachment = $data['attachment'] ?? '';
     }
 
     /**
@@ -35,10 +37,18 @@ class TestMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.testmail')
-            ->text('emails.testmail_plain')
+        $email = $this->view('emails.send_mail')
+            ->text('emails.send_mail_plain')
             ->subject($this->subj)
-            ->attach(public_path('storage/avatar.png'))
+//            ->attach(public_path('storage/avatar.png'))
             ->with(['message' => $this]);
+
+        if ($this->attachment) {
+            foreach ($this->attachment as $filePath) {
+                $email->attach(public_path('storage/'. $filePath));
+            }
+        }
+
+        return $email;
     }
 }

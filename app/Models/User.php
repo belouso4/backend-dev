@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Notifications\ResetPasswordApi;
 use App\Traits\HasRolesAndPermissions;
 use Carbon\Carbon;
-use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
+//use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -42,7 +42,7 @@ class User extends Authenticatable implements MustVerifyEmail
 //        $this->attributes['status'] = $value ? 1 : 0;
 //    }
 
-    protected $perPage = 5;
+    protected $perPage = 10;
 
     /**
      * The attributes that should be hidden for serialization.

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Rules\ValidOldPassword;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Auth;
@@ -23,12 +24,21 @@ class UsersController extends Controller
 
     public function update(Request $request, User $user)
     {
+//        $this->validate($request, [
+//            'name' => 'required|min:3|max:50|string',
+//            'email' => 'required|email',
+//            'new_password' => 'required_with:new_password',
+//            'existing_password' => 'sometimes|string|min:6',
+//            'confirm_password' => 'sometimes|same:new_password'
+//        ]);
+
         $this->validate($request, [
             'name' => 'required|min:3|max:50|string',
-            'email' => 'required|email',
-            'new_password' => 'required_with:new_password',
-            'existing_password' => 'sometimes|string|min:6',
-            'confirm_password' => 'sometimes|same:new_password'
+            'email' => 'required|email|max:255|unique:users,email,'.auth()->id(),
+            'old_password' => ['nullable','sometimes','required_with:new_password', new ValidOldPassword()],
+            'new_password' => 'required_with:old_password',
+            'confirm_password' => 'required_with:new_password|same:new_password',
+            'avatar' => $request->hasFile('avatar') ? 'mimes:jpeg,jpg,png,gif|max:1024' : '', // 1 MB'
         ]);
 
         $user = $request->user();

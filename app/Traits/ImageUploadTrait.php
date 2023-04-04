@@ -8,20 +8,19 @@ use Illuminate\Support\Str;
 
 trait ImageUploadTrait
 {
-
     private $fileName;
     private $image;
     private $folder;
     private $oldImage;
 
-    public function setImage(UploadedFile $uploadedFile, $folder, $oldImage = null): string
+    public function setImage( ?UploadedFile $uploadedFile, $folder, $oldImage = null)
     {
-        $this->fileName = $this->imageName($uploadedFile);
-        $this->image = $uploadedFile;
-        $this->folder = $folder;
-        $this->oldImage = $oldImage;
+            $this->fileName = $this->imageName($uploadedFile);
+            $this->image = $uploadedFile;
+            $this->folder = $folder;
+            $this->oldImage = $oldImage;
 
-        return $this->fileName;
+            return $this->fileName;
     }
 
     public function uploadImage()
@@ -60,13 +59,36 @@ trait ImageUploadTrait
         $fileName = null;
 
         if($image) {
-            $replaceRuWords = Str::slug($image->getClientOriginalName(), '_');
-            $strtolower = strtolower($replaceRuWords);
-            $replaceSpaces = preg_replace('/\s+/', '_', $strtolower);
+            $replaceRuWords = self::translit($image->getClientOriginalName(), '_');
+            $strToLower = strtolower($replaceRuWords);
+            $replaceSpaces = preg_replace('/\s+/', '_', $strToLower);
             $fileName = time().'_'.$replaceSpaces;
         }
 
         return $fileName;
+    }
+
+    public static function translit($str)
+    {
+        $tr = array(
+            "А"=>"A","Б"=>"B","В"=>"V","Г"=>"G",
+            "Д"=>"D","Е"=>"E","Ж"=>"J","З"=>"Z","И"=>"I",
+            "Й"=>"Y","К"=>"K","Л"=>"L","М"=>"M","Н"=>"N",
+            "О"=>"O","П"=>"P","Р"=>"R","С"=>"S","Т"=>"T",
+            "У"=>"U","Ф"=>"F","Х"=>"H","Ц"=>"TS","Ч"=>"CH",
+            "Ш"=>"SH","Щ"=>"SCH","Ъ"=>"","Ы"=>"YI","Ь"=>"",
+            "Э"=>"E","Ю"=>"YU","Я"=>"YA","а"=>"a","б"=>"b",
+            "в"=>"v","г"=>"g","д"=>"d","е"=>"e","ж"=>"j",
+            "з"=>"z","и"=>"i","й"=>"y","к"=>"k","л"=>"l",
+            "м"=>"m","н"=>"n","о"=>"o","п"=>"p","р"=>"r",
+            "с"=>"s","т"=>"t","у"=>"u","ф"=>"f","х"=>"h",
+            "ц"=>"ts","ч"=>"ch","ш"=>"sh","щ"=>"sch","ъ"=>"y",
+            "ы"=>"yi","ь"=>"'","э"=>"e","ю"=>"yu","я"=>"ya",
+            " "=>"_","?"=>"_","/"=>"_","\\"=>"_",
+            "*"=>"_",":"=>"_","*"=>"_","\""=>"_","<"=>"_",
+            ">"=>"_","|"=>"_"
+        );
+        return strtr($str,$tr);
     }
 
 //    private function storeImage($post)
