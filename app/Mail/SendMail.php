@@ -13,7 +13,6 @@ class SendMail extends Mailable
 
     protected $subj;
     public $url = 'http://localhost:3000';
-    public $name;
     public $msg;
     private $attachment;
 
@@ -22,12 +21,11 @@ class SendMail extends Mailable
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct($subject, $message, $attachment = null)
     {
-        $this->name = $data['to'];
-        $this->subj = $data['subject'];
-        $this->msg = $data['message'];
-        $this->attachment = $data['attachment'] ?? '';
+        $this->subj = $subject;
+        $this->msg = $message;
+        $this->attachment = $attachment;
     }
 
     /**

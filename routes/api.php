@@ -125,6 +125,7 @@ Route::group(['prefix' => 'v1'], function(){
          * Admin General Routes
          */
         Route::post('/mail', [\App\Http\Controllers\API\Admin\MailController::class, 'store']);
+        Route::get('/mail/search', [\App\Http\Controllers\API\Admin\MailController::class, 'search']);
     });
 
 
