@@ -4,7 +4,9 @@ namespace Database\Factories;
 
 use App\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+
 
 class TagFactory extends Factory
 {
@@ -17,13 +19,13 @@ class TagFactory extends Factory
      */
     public function definition()
     {
-        $text = $this->faker->word;
+        $tag_name = $this->getTag();
 
         $tag = [
-            'tag' => $text,
+            'tag' => $tag_name,
         ];
 
-        $tag['slug'] = Str::slug($text);
+        $tag['slug'] = Str::slug($tag_name);
         $check = Tag::where('slug', '=', $tag['slug'])->exists();
 
         if ($check) {
@@ -31,5 +33,17 @@ class TagFactory extends Factory
         }
 
         return $tag;
+    }
+
+    public function getTag() {
+        $text = $this->faker->word;
+
+        $check = Tag::where('tag', '=', $text)->exists();
+
+        if ($check) {
+            return Str::slug($text) . time();
+        } else {
+            return $text;
+        }
     }
 }

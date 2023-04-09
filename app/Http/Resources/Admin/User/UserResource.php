@@ -18,7 +18,7 @@ class UserResource extends JsonResource
     public function toArray($request)
     {
         $role = $this->roles()->exists()
-            ? $this->roles()->first()->only(['id'])
+            ? $this->roles()->first()->only(['id', 'name'])
             : '';
 
         return [

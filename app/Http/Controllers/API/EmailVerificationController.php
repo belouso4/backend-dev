@@ -35,6 +35,7 @@ class EmailVerificationController extends Controller
         if( $request->user()->hasVerifiedEmail() ){
             return response()->json( 'User already has a verified email!', 422);
         }
+
         $request->user()->sendApiEmailVerificationNotification();
         return response()->json( 'Please check your email to verify' );
     }

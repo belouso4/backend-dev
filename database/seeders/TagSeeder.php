@@ -14,6 +14,11 @@ class TagSeeder extends Seeder
      */
     public function run()
     {
-        Tag::factory()->count(20)->create();
+
+        $max = 20;
+        for($c=1; $c<=$max; $c++) {
+            Tag::factory()->create();
+        }
+
     }
 }

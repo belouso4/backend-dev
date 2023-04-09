@@ -36,7 +36,7 @@ Route::group(['prefix' => 'v1'], function(){
      */
     Route::get('/posts', [PostController::class, 'index']);
     Route::get('/post/{post}',[PostController::class, 'show']);
-    Route::get('/post/{slug}/comments', [PostCommentsController::class, 'index']);
+    Route::get('/post/{post}/comments', [PostCommentsController::class, 'index']);
 
     Route::group(['middleware' => ['auth:sanctum']], function(){
 
@@ -97,8 +97,8 @@ Route::group(['prefix' => 'v1'], function(){
         /**
          * Admin Users with Roles Routes
          */
-        Route::get('/users-roles', [UserRolesController::class, 'index']);
-        Route::get('/users/roles', [UserRolesController::class, 'search']);
+        Route::get('/users/roles', [UserRolesController::class, 'index']);
+        Route::get('/users/roles/search', [UserRolesController::class, 'search']);
 
         /**
          * Admin Roles and Permission Routes

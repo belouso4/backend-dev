@@ -29,10 +29,10 @@ class PostCommentsController extends Controller
         $this->commentRepository = app(IComment::class);
     }
 
-    public function index(Request $request, $slug)
+    public function index(Request $request, Post $post)
     {
         $comments = $this->postCommentRepository
-            ->getCommentsWithUser('slug',$slug, $request->get('offset'));
+            ->getCommentsWithUser('slug',$post->slug, $request->get('offset'));
 
         return new PostCommentsResource($comments);
     }

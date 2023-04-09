@@ -25,9 +25,9 @@ class PostResource extends JsonResource
             'tags' => TagResource::collection($this->tags),
             'user_like_count' => $this->user_like_count,
             'metadata' => [
-                'title' => $this->meta_title,
-                'keywords' => $this->meta_keywords,
-                'description' => $this->meta_desc,
+                'title' => $this->meta_title ?? 0,
+                'keywords' => $this->meta_keywords ?? 0,
+                'description' => $this->meta_desc ?? 0,
             ]
         ];
     }

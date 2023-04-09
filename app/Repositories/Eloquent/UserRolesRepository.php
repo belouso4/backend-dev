@@ -16,4 +16,12 @@ class UserRolesRepository extends BaseRepository implements IUserRoles {
             ->with('roles')
             ->paginate();
     }
+
+    public function search($query)
+    {
+        return $this->model::whereHas('roles')
+            ->where('name', 'like', "$query%")
+            ->with('roles')
+            ->paginate();
+    }
 }

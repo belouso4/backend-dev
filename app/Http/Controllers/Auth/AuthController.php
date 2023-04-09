@@ -43,13 +43,18 @@ class AuthController extends Controller
 
     public function login( Request $request )
     {
+        $request->validate( [
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:6',
+        ]);
+
         if (Auth::attempt( $request->only('email', 'password') )) {
-            $request->session()->regenerate();
+//            $request->session()->regenerate();
 
             return response()->json('', 204 );
         }else{
             return response()->json([
-                'error' => 'invalid_credentials'
+                'error' => 'Недействительные учетные данные'
             ], 403);
         }
     }
@@ -58,9 +63,9 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
+//        $request->session()->invalidate();
+//
+//        $request->session()->regenerateToken();
 
         return response()->json('', 204);
     }

@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Http\Requests\AdminMailRequest;
+use App\Jobs\SendEmailJob;
 use App\Mail\SendMail;
 use App\Models\User;
 use App\Traits\ImageUploadTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class MailController extends AdminController
 {
@@ -15,27 +17,21 @@ class MailController extends AdminController
 
     public function store(AdminMailRequest $request)
     {
-        $data = $request->only('subject', 'message');
+        $data = $request->only('subject', 'message', 'to');
 
         if ($request->hasFile('attachment')) {
             foreach ($request->file('attachment') as $file) {
-                $data['attachment'][] = $file->storeAs('/mail', $this->imageName($file));
+                $img = $file->storeAs('/mail', $this->imageName($file));
+                $path = public_path('storage/'. $img);
+
+                $data['attachment'][$path] =  [
+                    'as' => $file->getClientOriginalName(),
+                    'mime' => $file->getClientMimeType(),
+                ];
             }
         }
 
-        if ((int)$request['select'] === 1) {
-            $users = User::all('email');
-
-            foreach ($users as $user) {
-                Mail::to($user->email)
-                    ->send(new SendMail(...$data));
-            }
-
-            return response()->json('ok2');
-        }
-
-        Mail::to($request['to'])
-            ->send(new SendMail(...$data));
+        SendEmailJob::dispatch($data, $request['select']);
 
         return response()->json('ok');
     }

@@ -4,11 +4,14 @@ namespace App\Notifications;
 
 use App\Mail\EmailVerification;
 use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailBase;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\URL;
 
-class VerifyApiEmail extends VerifyEmailBase
+class VerifyApiEmailNotification extends VerifyEmailBase implements ShouldQueue
 {
+    use Queueable;
 
     public function toMail($notifiable)
     {

@@ -31,7 +31,9 @@ trait ImageUploadTrait
     public function updateImage()
     {
         if($this->fileName) {
-            Storage::delete($this->oldImage);
+            if ($this->oldImage != '300x200.png') {
+                Storage::delete($this->oldImage);
+            }
             return $this->uploadImage();
         }
     }

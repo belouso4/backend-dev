@@ -12,7 +12,6 @@ class SendMail extends Mailable
     use Queueable, SerializesModels;
 
     protected $subj;
-    public $url = 'http://localhost:3000';
     public $msg;
     private $attachment;
 
@@ -38,12 +37,11 @@ class SendMail extends Mailable
         $email = $this->view('emails.send_mail')
             ->text('emails.send_mail_plain')
             ->subject($this->subj)
-//            ->attach(public_path('storage/avatar.png'))
             ->with(['message' => $this]);
 
         if ($this->attachment) {
-            foreach ($this->attachment as $filePath) {
-                $email->attach(public_path('storage/'. $filePath));
+            foreach ($this->attachment as $filePath => $fileParameters) {
+                $email->attach($filePath, $fileParameters);
             }
         }
 

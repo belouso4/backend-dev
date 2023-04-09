@@ -8,8 +8,10 @@ use App\Models\Post;
 use App\Models\PostView;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 use Auth;
+use function Sodium\add;
 
 class PostController extends Controller
 {
@@ -21,7 +23,6 @@ class PostController extends Controller
 
     public function index()
     {
-
         $posts = Post::with('tags')
             ->withCount('likes')
             ->withCount('userLike')
@@ -29,6 +30,8 @@ class PostController extends Controller
             ->where('status', '=', '1')
             ->orderBy('created_at', 'DESC')
             ->paginate(7);
+
+
 
 //        $posts->getCollection()->transform(function($post, $key) {
 //            return [
@@ -73,8 +76,10 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
+        $auth = auth()->user();
+        $permission = $auth && $auth->can('edit', $post);
+
         $post = Post::where('id', '=', $post->id)
-            ->where('status', '=', '1')
             ->withCount('comments')
             ->with(['tags' => function( $query ){
                 $query->select(['id', 'tag']);
@@ -85,7 +90,13 @@ class PostController extends Controller
             PostView::createViewLog($post);
         }
 
-        return new PostResource($post);
+        if ($permission) {
+            return new PostResource($post);
+        } elseif ($post->status == 1) {
+            return new PostResource($post);
+        } else {
+            abort(404);
+        }
     }
 
     public function like( $slug ){

@@ -19,7 +19,7 @@ class CreatePostsTable extends Migration
             $table->string('slug',255)->unique();
             $table->text('desc');
             $table->text('excerpt')->nullable();
-            $table->enum('status',['0','1'])->default(1);
+            $table->enum('status',[0,1])->default(1);
             $table->string('img',255)->nullable();
             $table->softDeletes();
             $table->timestamps();
