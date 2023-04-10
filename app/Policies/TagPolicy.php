@@ -6,7 +6,7 @@ use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class TagPolicy
+class TagPolicy extends AdminPolicy
 {
     use HandlesAuthorization;
 
