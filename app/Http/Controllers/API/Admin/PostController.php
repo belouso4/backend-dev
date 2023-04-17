@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\Admin;
 
+use App\Http\Resources\Admin\Post\PostsResource;
 use App\Traits\ImageUploadTrait;
 use App\Http\Requests\AdminPostCreateRequest;
 use App\Http\Requests\AdminPostUpdateRequest;
@@ -31,7 +32,7 @@ class PostController extends AdminController
     {
         $posts = $this->postRepository->getAllPosts();
 
-        return PostResource::collection($posts);
+        return PostsResource::collection($posts);
     }
 
     public function create(Request $request)
@@ -105,7 +106,7 @@ class PostController extends AdminController
         $posts = $this->postRepository
             ->getDeletedPosts();
 
-        return PostResource::collection($posts);
+        return PostsResource::collection($posts);
     }
 
     public function forceDelete($id)

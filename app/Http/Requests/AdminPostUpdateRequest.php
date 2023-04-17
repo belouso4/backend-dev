@@ -28,7 +28,8 @@ class AdminPostUpdateRequest extends FormRequest
             'desc' => 'required|min:5|string',
             'img' => $this->hasFile('img') ? 'mimes:jpeg,jpg,png,gif|max:1024' : '', // 1 MB
             'status' => 'required|in:0,1',
-            'tags' => 'array'
+            'tags' => 'array',
+            'category_id' => 'nullable|exists:categories,id'
         ];
     }
 }

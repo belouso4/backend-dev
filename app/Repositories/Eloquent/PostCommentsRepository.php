@@ -14,7 +14,7 @@ class PostCommentsRepository extends BaseRepository implements IPostComments
 
     public function getCommentsWithUser($column, $value, $offset)
     {
-        return $this->model->where($column, $value)
+        return $this->model->withTrashed()->where($column, $value)
             ->select(['id'])
             ->withCount('comments')
             ->with(['comments' => function($comments) use ($offset) {

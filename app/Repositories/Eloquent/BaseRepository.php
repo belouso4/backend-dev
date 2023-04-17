@@ -28,6 +28,11 @@ abstract class BaseRepository implements IBase {
         return $this->model->where($column, $value)->get();
     }
 
+    public function findBySlugOrFail($column, $value)
+    {
+        return $this->model->withTrashed()->where($column, $value)->firstOrFail();
+    }
+
     public function create(array $data)
     {
         $result = $this->model->create($data);

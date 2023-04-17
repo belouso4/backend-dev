@@ -80,7 +80,4 @@ class Comment extends Model
         $this->likes()->detach();
         $this->delete();
     }
-
-
-
 }

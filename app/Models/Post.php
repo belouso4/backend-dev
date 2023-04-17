@@ -36,6 +36,7 @@ protected $fillable = [
         'meta_title',
         'meta_desc',
         'meta_keywords',
+        'category_id'
     ];
 
     public function sluggable(): array
@@ -59,6 +60,10 @@ protected $fillable = [
 
     public function tags() {
         return $this->belongsToMany(Tag::class);
+    }
+
+    public function category() {
+        return $this->belongsTo(Category::class);
     }
 
     public function likes(){
@@ -94,18 +99,5 @@ protected $fillable = [
     public function comments() {
         return $this->hasMany(Comment::class)->whereNull('parent_id');
     }
-
-//    public function addedBy()
-//    {
-//        return $this->hasOne('App\Models\User', 'id',
-//            'added_by');
-//    }
-
-//
-//    public function getRouteKeyName()
-//    {
-//        return 'slug';
-//    }
-
 
 }

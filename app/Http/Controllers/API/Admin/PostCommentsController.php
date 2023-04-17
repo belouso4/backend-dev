@@ -22,12 +22,14 @@ class PostCommentsController extends AdminController
         $this->comment = app(IPostComments::class);
     }
 
-    public function index(Request $request, Post $post)
+    public function index(Request $request, $slug)
     {
+        $this->comment->findBySlugOrFail('slug', $slug);
+
         $comments = $this->comment
             ->getCommentsWithUser(
                 'slug',
-                $post->slug,
+                $slug,
                 $request->query('offset')
             );
 
@@ -39,8 +41,9 @@ class PostCommentsController extends AdminController
         //
     }
 
-    public function store(CommentCreateRequest $request, Post $post)
+    public function store(CommentCreateRequest $request, $slug)
     {
+        $post = $this->comment->findBySlugOrFail('slug', $slug);
         $comment = new Comment($request->all(['body', 'parent_id']));
 
         $comment->user()->associate(auth()->user());

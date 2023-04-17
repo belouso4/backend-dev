@@ -19,7 +19,6 @@ class CreateUsersPostsLikes extends Migration
             $table->unsignedBigInteger('post_id')->unsigned();
             $table->foreign('post_id')->references('id')->on('posts');
             $table->primary(['user_id', 'post_id']);
-            $table->timestamps();
         });
     }
 

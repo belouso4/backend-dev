@@ -17,6 +17,7 @@ class PostResource extends JsonResource
             'slug' => $this->slug,
             'created_at' => $this->created_at->format('d.m.Y'),
             'title' => $this->title,
+            'category_id' => $this->category_id,
             'desc' => $this->desc,
             'img' => Storage::url($this->img),
             'status' => $this->status,

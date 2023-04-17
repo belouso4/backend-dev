@@ -13,6 +13,7 @@ class PostRepository extends BaseRepository implements IPost {
 
     public function getAllPosts() {
         return $this->model
+            ->with('category.parent')
             ->orderBy('created_at', 'desc')
             ->paginate();
     }
@@ -40,6 +41,7 @@ class PostRepository extends BaseRepository implements IPost {
     public function getDeletedPosts() {
         return $this->model
             ->onlyTrashed()
+            ->with('category.parent')
             ->orderBy('deleted_at', 'DESC')
             ->paginate();
     }

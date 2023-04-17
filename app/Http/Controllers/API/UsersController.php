@@ -2,79 +2,41 @@
 
 namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
-use App\Rules\ValidOldPassword;
+use App\Traits\ImageUploadTrait;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class UsersController extends Controller
 {
+    use ImageUploadTrait;
+
     public function __construct()
     {
-        $this->middleware('auth')->only('show');
+
     }
 
     public function show( Request $request ){
         return new UserResource(auth()->user());
     }
 
-    public function update(Request $request, User $user)
+    public function update(UserUpdateRequest $request, User $user)
     {
-//        $this->validate($request, [
-//            'name' => 'required|min:3|max:50|string',
-//            'email' => 'required|email',
-//            'new_password' => 'required_with:new_password',
-//            'existing_password' => 'sometimes|string|min:6',
-//            'confirm_password' => 'sometimes|same:new_password'
-//        ]);
-
-        $this->validate($request, [
-            'name' => 'required|min:3|max:50|string',
-            'email' => 'required|email|max:255|unique:users,email,'.auth()->id(),
-            'old_password' => ['nullable','sometimes','required_with:new_password', new ValidOldPassword()],
-            'new_password' => 'required_with:old_password',
-            'confirm_password' => 'required_with:new_password|same:new_password',
-            'avatar' => $request->hasFile('avatar') ? 'mimes:jpeg,jpg,png,gif|max:1024' : '', // 1 MB'
-        ]);
+        if ($request->exists('new_password')) {
+            $request->request->add(['password' => $request['new_password']]);
+        }
 
         $user = $request->user();
+        $user->update($request->all());
 
-        if ($user->avatar != $request['avatar']) {
-            if (Storage::disk('public')->exists('/avatar/'.$user->avatar)) {
-                if ($user->avatar !== 'avatar.png') {
-                    Storage::disk('public')->delete('/avatar/'.$user->avatar);
-                }
-
-                $image = $request->file('avatar');
-                $image_path = $image->getPathname();
-                $filename = time().'_'.preg_replace('/\s+/', '_', strtolower(Str::slug($image->getClientOriginalName())));
-                $tmp = $image->storeAs('/avatar', $filename, 'public');
-
-                $user->avatar = $filename;
-            }
+        if($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $this->setImage($file, '/avatar', $user->avatar);
+            $user->avatar = $this->updateAvatar();
+            $user->save();
         }
 
-        if (Hash::check($request['existing_password'], $user->password)) {
-            $user->password = bcrypt($request['new_password']);
-        }
-
-        $user->name = $request['name'];
-        $user->email = $request['email'];
-        $user->save();
-
-        if ($user) {
-            return response()->json($user, 200);
-
-        } else {
-            return response()->json($user, 500);
-        }
+        return response()->json(null);
     }
-
-//    public function getUser(){
-//        return Auth::guard('api')->user();
-//    }
 }

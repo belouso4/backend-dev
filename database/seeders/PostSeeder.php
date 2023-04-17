@@ -15,7 +15,7 @@ class PostSeeder extends Seeder
      */
     public function run()
     {
-        $posts = Post::factory()->count(300)->create();
+        $posts = Post::factory()->count(30)->create();
 
         foreach ($posts as $post) {
             $tags = Tag::inRandomOrder()->limit(random_int(2, 5))->get(['id']);

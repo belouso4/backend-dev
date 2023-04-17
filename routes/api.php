@@ -14,6 +14,8 @@ use App\Http\Controllers\API\Admin\UserRolesController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\Admin\GeneralController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\API\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\API\CategoryController;
 
 
 Route::group(['prefix' => 'v1'], function(){
@@ -31,24 +33,29 @@ Route::group(['prefix' => 'v1'], function(){
         Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
         Route::post('/reset-password', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'reset']);
     });
+
     /**
      * Post Routes
      */
-    Route::get('/posts', [PostController::class, 'index']);
-    Route::get('/post/{post}',[PostController::class, 'show']);
-    Route::get('/post/{post}/comments', [PostCommentsController::class, 'index']);
+    Route::get('/category/{category}/articles', [PostController::class, 'index']);
+    Route::get('/article/{post}', [PostController::class, 'show']);
+    Route::get('/article/{post}/comments', [PostCommentsController::class, 'index']);
+
+    /**
+     * Category Routes
+     */
+    Route::get('/categories', CategoryController::class);
 
     Route::group(['middleware' => ['auth:sanctum']], function(){
-
         Route::get('/user', [UsersController::class, 'show']);
-
         Route::put('/user/{user}', [UsersController::class, 'update'])->middleware(['verified']);
+
         /**
          * Auth Post Routes
          */
-        Route::post('/post/{slug}/like', [PostController::class, 'like']);
-        Route::post('/post/{post}/comment', [PostCommentsController::class, 'store']);
-        Route::post('/post/comment/{comment}/like', [PostCommentsController::class, 'like']);
+        Route::post('/article/{post:id}/like', [PostController::class, 'like']);
+        Route::post('/article/{post}/comment', [PostCommentsController::class, 'store']);
+        Route::post('/article/comment/{comment}/like', [PostCommentsController::class, 'like']);
 
     });
 
@@ -83,6 +90,15 @@ Route::group(['prefix' => 'v1'], function(){
         Route::get('/tags/search', [TagsController::class, 'search']);
         Route::put('/tag/update/{tag}', [TagsController::class, 'update']);
         Route::delete('/tag/delete/{id}', [TagsController::class, 'delete']);
+
+        /**
+         * Admin Category Routes
+         */
+        Route::get('/categories', [AdminCategoryController::class, 'index']);
+        Route::post('/category/create', [AdminCategoryController::class, 'store']);
+        Route::put('/categories/update', [AdminCategoryController::class, 'updateMenu']);
+        Route::put('/category/update/{category}', [AdminCategoryController::class, 'update']);
+        Route::delete('/category/delete/{category}', [AdminCategoryController::class, 'destroy']);
 
         /**
          * Admin Users Routes

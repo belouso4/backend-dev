@@ -3,10 +3,12 @@
 namespace App\Providers;
 
 use App\Http\Resources\Admin\Tag\TagResource;
+use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Role;
 use App\Models\Tag;
 use App\Models\User;
+use App\Observers\AdminCategoryObserver;
 use App\Observers\AdminPostObserver;
 use App\Observers\AdminRoleObserver;
 use App\Observers\AdminTagObserver;
@@ -62,6 +64,7 @@ class AppServiceProvider extends ServiceProvider
         Tag::observe(AdminTagObserver::class);
         User::observe(UserObserver::class);
         Role::observe(AdminRoleObserver::class);
+        Category::observe(AdminCategoryObserver::class);
 
         TagResource::withoutWrapping();
     }

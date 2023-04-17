@@ -19,27 +19,20 @@ class UserResource extends JsonResource
 
     public function toArray($request)
     {
-//        $permission = $this->roles()->with('permissions')->get()->pluck('permissions')->flatten(1)->pluck('slug');
-//        $permission = Role::find($this->roles()->id)->permissions->pluck('slug');
-
-        $permission = $this->roles()->exists()
-            ? $this->roles()->first()->permissions->pluck('name')
-            : '';
-
-        $role = $this->roles()->exists()
-            ? $this->roles()->first()->slug
-            : '';
+        $exist_role = $this->roles()->exists();
+        $permission = $exist_role ? $this->roles()->first()->permissions->pluck('name') : '';
+        $role = $exist_role ? $this->roles()->first()->slug : '';
 
         return [
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
             'avatar' => Storage::url($this->avatar),
-            'is_admin' => $this->roles()->exists(),
+            'is_admin' => $this->when($exist_role, $exist_role),
             'banned_until' => $this->banned_until,
             'status' => $this->status,
-            'role' => $role,
-            'permission' => $permission,
+            'role' => $this->when($exist_role, $role),
+            'permission' => $this->when($exist_role, $permission),
             'email_verified_at'=> $this->email_verified_at
         ];
     }

@@ -19,31 +19,11 @@ class TagFactory extends Factory
      */
     public function definition()
     {
-        $tag_name = $this->getTag();
+        $tag_name = $this->faker->unique()->word();
 
-        $tag = [
+        return [
             'tag' => $tag_name,
+            'slug' => Str::slug($tag_name),
         ];
-
-        $tag['slug'] = Str::slug($tag_name);
-        $check = Tag::where('slug', '=', $tag['slug'])->exists();
-
-        if ($check) {
-            $tag['slug'] = Str::slug($tag['slug']) . time();
-        }
-
-        return $tag;
-    }
-
-    public function getTag() {
-        $text = $this->faker->word;
-
-        $check = Tag::where('tag', '=', $text)->exists();
-
-        if ($check) {
-            return Str::slug($text) . time();
-        } else {
-            return $text;
-        }
     }
 }

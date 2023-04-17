@@ -29,6 +29,7 @@ class AdminPostCreateRequest extends FormRequest
             'desc' => 'required|min:5|string',
             'img' => 'required|mimes:jpeg,jpg,png,gif|max:1024', // 1 MB'
             'status' => 'required|in:0,1',
+            'category_id' => 'required|numeric|exists:categories,id'
         ];
     }
 }
