@@ -46,11 +46,18 @@ class PostController extends Controller
     public function like( Post $post){
         if( !$post->likes->contains( auth()->user()->id ) ){
             $post->likes()->attach(auth()->user()->id);
+            $like_my = true;
         } else {
             $post->likes()->detach( auth()->user()->id );
+            $like_my = false;
         }
 
-        return response()->json( $post->likes()->count() );
+        return response()->json(
+            [
+                'like_count' => $post->likes()->count(),
+                'like_my' => $like_my
+            ]
+        );
     }
 
 }

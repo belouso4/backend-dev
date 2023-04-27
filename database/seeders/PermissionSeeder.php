@@ -28,6 +28,17 @@ class PermissionSeeder extends Seeder
                 ]
             ],
             [
+                'group_name' => 'Категории',
+                'group_slug' => 'category',
+                'permissions' => [
+                    // Blog Permissions
+                    'category.create',
+                    'category.view',
+                    'category.edit',
+                    'category.delete',
+                ]
+            ],
+            [
                 'group_name' => 'Теги',
                 'group_slug' => 'tag',
                 'permissions' => [

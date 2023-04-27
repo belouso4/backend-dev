@@ -16,7 +16,10 @@ class CategoryController extends AdminController
 
     public function __construct()
     {
-
+        $this->middleware('can:viewAny,App\Models\Category');
+        $this->middleware('can:edit,category')->only(['update', 'updateMenu']);
+        $this->middleware('can:create,App\Models\Category')->only(['store']);
+        $this->middleware('can:delete,category')->only(['destroy']);
     }
 
     public function index(Request $request)

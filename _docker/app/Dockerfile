@@ -1,6 +1,8 @@
 FROM php:8.0-fpm
 
 USER root
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
 
 RUN apt-get update && apt-get install -y \
       apt-utils \

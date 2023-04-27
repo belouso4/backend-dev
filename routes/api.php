@@ -46,6 +46,11 @@ Route::group(['prefix' => 'v1'], function(){
      */
     Route::get('/categories', CategoryController::class);
 
+    /**
+     * Category Routes
+     */
+    Route::get('/other/sliders', [\App\Http\Controllers\API\OtherController::class, 'index']);
+
     Route::group(['middleware' => ['auth:sanctum']], function(){
         Route::get('/user', [UsersController::class, 'show']);
         Route::put('/user/{user}', [UsersController::class, 'update'])->middleware(['verified']);
@@ -138,10 +143,16 @@ Route::group(['prefix' => 'v1'], function(){
         Route::put('/profile', [GeneralController::class, 'profile']);
 
         /**
-         * Admin General Routes
+         * Admin Mail Routes
          */
         Route::post('/mail', [\App\Http\Controllers\API\Admin\MailController::class, 'store']);
         Route::get('/mail/search', [\App\Http\Controllers\API\Admin\MailController::class, 'search']);
+
+        /**
+         * Admin Other Routes
+         */
+        Route::get('/other/sliders', [\App\Http\Controllers\API\Admin\OtherController::class, 'index']);
+        Route::post('/other/sliders', [\App\Http\Controllers\API\Admin\OtherController::class, 'updateSliders']);
     });
 
 

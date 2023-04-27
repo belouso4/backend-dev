@@ -28,9 +28,9 @@ class PostController extends AdminController
         $this->postRepository = app(IPost::class);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $posts = $this->postRepository->getAllPosts();
+        $posts = $this->postRepository->getAllPosts($request->query('take'));
 
         return PostsResource::collection($posts);
     }
@@ -129,8 +129,10 @@ class PostController extends AdminController
 
     public function search(Request $request) {
         $query = $request->query('search');
-        $posts = $this->postRepository->search($query);
+        $take = $request->query('take');
 
-        return PostResource::collection($posts);
+        $posts = $this->postRepository->search($query, $take);
+
+        return PostsResource::collection($posts);
     }
 }

@@ -11,11 +11,11 @@ class PostRepository extends BaseRepository implements IPost {
         return Model::class;
     }
 
-    public function getAllPosts() {
+    public function getAllPosts($take) {
         return $this->model
             ->with('category.parent')
             ->orderBy('created_at', 'desc')
-            ->paginate();
+            ->paginate($take);
     }
 
     public function getPostWithTrashedAndTags($id) {
@@ -65,11 +65,11 @@ class PostRepository extends BaseRepository implements IPost {
         return $posts;
     }
 
-    public function search($query)
+    public function search($query, $take)
     {
         return $this->model
             ->where('title', 'like', "%$query%")
             ->orderBy('created_at', 'DESC')
-            ->paginate();
+            ->paginate($take);
     }
 }

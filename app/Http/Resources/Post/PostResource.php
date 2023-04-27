@@ -23,7 +23,7 @@ class PostResource extends JsonResource
             'img' => Storage::url($this->img),
             'status' => $this->status,
             'tags' => TagResource::collection($this->tags),
-            'user_like_count' => $this->user_like_count,
+            'like_my' => $this->user_like_count,
             'likes_count' => $this->likes_count,
             'metadata' => [
                 'title' => $this->meta_title ?? 0,
