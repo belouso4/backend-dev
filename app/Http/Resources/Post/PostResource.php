@@ -21,7 +21,6 @@ class PostResource extends JsonResource
             'excerpt' => $this->excerpt,
             'desc' => $this->desc,
             'img' => Storage::url($this->img),
-            'status' => $this->status,
             'tags' => TagResource::collection($this->tags),
             'like_my' => $this->user_like_count,
             'likes_count' => $this->likes_count,

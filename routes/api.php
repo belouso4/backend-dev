@@ -152,7 +152,10 @@ Route::group(['prefix' => 'v1'], function(){
          * Admin Other Routes
          */
         Route::get('/other/sliders', [\App\Http\Controllers\API\Admin\OtherController::class, 'index']);
+        Route::post('/other/slider', [\App\Http\Controllers\API\Admin\OtherController::class, 'add']);
         Route::post('/other/sliders', [\App\Http\Controllers\API\Admin\OtherController::class, 'updateSliders']);
+        Route::put('/other/slider/update', [\App\Http\Controllers\API\Admin\OtherController::class, 'upload']);
+        Route::delete('/other/slider/{id}', [\App\Http\Controllers\API\Admin\OtherController::class, 'delete']);
     });
 
 

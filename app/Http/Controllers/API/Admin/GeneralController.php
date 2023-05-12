@@ -18,7 +18,7 @@ class GeneralController extends AdminController
 
     public function profile(AdminGeneralProfileRequest $request)
     {
-        if ($request->exists('new_password')) {
+        if ($request->exists('new_password') && $request['new_password'] === "") {
             $request->request->add(['password' => $request['new_password']]);
         }
         $user = $request->user();
@@ -26,7 +26,7 @@ class GeneralController extends AdminController
 
         if($request->hasFile('avatar')) {
             $file = $request->file('avatar');
-            $this->setImage($file, '/avatar', $user->avatar);
+            $this->setImage($file, 'avatar', $user->avatar);
             $user->avatar = $this->updateAvatar();
             $user->save();
         }

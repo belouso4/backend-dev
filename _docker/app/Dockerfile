@@ -5,18 +5,28 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
 RUN apt-get update && apt-get install -y \
-      apt-utils \
-      libpq-dev \
-      libpng-dev \
-      libzip-dev \
-      zip unzip \
-      git && \
-      docker-php-ext-install pdo_mysql && \
-      docker-php-ext-install bcmath && \
-      docker-php-ext-install gd && \
-      docker-php-ext-install zip && \
-      apt-get clean && \
-      rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+        build-essential \
+        git \
+        curl \
+        libpng-dev \
+        libjpeg-dev \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libmcrypt-dev \
+        libgd-dev \
+        jpegoptim optipng pngquant gifsicle \
+        libonig-dev \
+        libxml2-dev \
+        zip \
+        sudo \
+        unzip
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install PHP extensions
+RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
 COPY ./_docker/app/php.ini /usr/local/etc/php/conf.d/php.ini
 
