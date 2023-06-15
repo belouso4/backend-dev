@@ -7,6 +7,7 @@ use App\Http\Resources\Post\PostResource;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\PostView;
+use Illuminate\Support\Facades\Gate;
 
 
 class PostController extends Controller
@@ -26,8 +27,7 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
-        $permission = auth()->user() && auth()->user()->can('edit', $post);
-        if (!$permission && $post->status != 1) {
+        if (Gate::allows('showPostStatusDisabled', $post)) {
             abort(404);
         }
 

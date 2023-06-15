@@ -2,6 +2,8 @@
 
 namespace App\Observers;
 
+use App\Jobs\DeleteUserFromIndex;
+use App\Jobs\UpdateUserInIndex;
 use App\Models\User;
 
 class UserObserver
@@ -14,26 +16,27 @@ class UserObserver
      */
     public function creating(User $user)
     {
-        if(!$user->isDirty('avatar')) {
+        if(!$user->isDirty('avatar') || $user->avatar === null) {
             $user->avatar = 'avatar.png';
         }
     }
     public function created(User $user)
     {
-        //
+        UpdateUserInIndex::dispatch($user);
     }
 
-    /**
-     * Handle the User "updated" event.
-     *
-     * @param  \App\Models\User  $user
-     * @return void
-     */
     public function updated(User $user)
     {
         if($user->isDirty('password')) {
             request()->session()->regenerateToken();
         }
+
+        UpdateUserInIndex::dispatch($user);
+    }
+
+    public function deleting(User $user)
+    {
+        DeleteUserFromIndex::dispatch($user->id);
     }
 
     /**
@@ -44,7 +47,6 @@ class UserObserver
      */
     public function deleted(User $user)
     {
-        //
     }
 
     /**

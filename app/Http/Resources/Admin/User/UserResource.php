@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources\Admin\User;
 
+use App\Helper\Helper;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class UserResource extends JsonResource
 {
@@ -25,7 +25,7 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'avatar' => Storage::url($this->avatar),
+            'avatar' => Helper::getPathIfExist('avatar/original/', $this->avatar),
             'role' => $role,
             'banned_until' => $this->banned_until,
             'status' => $this->status,

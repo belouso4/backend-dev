@@ -6,7 +6,6 @@ use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Traits\ImageUploadTrait;
 use Illuminate\Http\Request;
-use App\Models\User;
 
 class UsersController extends Controller
 {
@@ -21,7 +20,7 @@ class UsersController extends Controller
         return new UserResource(auth()->user());
     }
 
-    public function update(UserUpdateRequest $request, User $user)
+    public function update(UserUpdateRequest $request)
     {
         if ($request->exists('new_password')) {
             $request->request->add(['password' => $request['new_password']]);
@@ -31,12 +30,11 @@ class UsersController extends Controller
         $user->update($request->all());
 
         if($request->hasFile('avatar')) {
-            $file = $request->file('avatar');
-            $this->setImage($file, '/avatar', $user->avatar);
-            $user->avatar = $this->updateAvatar();
+            $user->avatar = $this->setImage('avatar', 'avatar/', $user->avatar);
             $user->save();
+            $this->updateAvatar();
         }
 
-        return response()->json(null);
+        return response()->json(null, 204);
     }
 }

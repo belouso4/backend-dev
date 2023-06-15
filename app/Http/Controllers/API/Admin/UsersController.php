@@ -7,7 +7,6 @@ use App\Http\Requests\AdminUserUpdateRequest;
 use App\Http\Resources\Admin\User\UserResource;
 use App\Models\User;
 use App\Repositories\Contracts\IUser;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Traits\ImageUploadTrait;
 
@@ -40,14 +39,10 @@ class UsersController extends AdminController
     public function store(AdminUserCreateRequest $request)
     {
         $user = new User($request->all());
-
-        if($request->hasFile('avatar')) {
-            $file = $request->file('avatar');
-            $this->setImage($file, '/avatar');
-            $user->avatar = $this->uploadAvatar();
-        }
+        $user->avatar = $this->setImage('avatar', '/avatar');
 
         $user->save();
+        $this->uploadAvatar();
         $user->roles()->attach($request['role_id']);
 
         return response()->json(['id' => $user->id]);
@@ -87,10 +82,9 @@ class UsersController extends AdminController
         $user->roles()->sync($request['role_id']);
 
         if($request->hasFile('avatar')) {
-            $file = $request->file('avatar');
-            $this->setImage($file, '/avatar', $user->avatar);
-            $user->avatar = $this->updateAvatar();
+            $user->avatar = $this->setImage('avatar', '/avatar', $user->avatar);
             $user->save();
+            $this->updateAvatar();
         }
 
         return response()->json(['id' => $user->id]);
@@ -102,7 +96,8 @@ class UsersController extends AdminController
         return response()->json(null, 204);
     }
 
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
         $query = $request->query('search');
         $users = $this->userRepository->search($query);
 

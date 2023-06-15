@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Category;
+use Illuminate\Support\Facades\Cache;
 
 class AdminCategoryObserver
 {
@@ -56,7 +57,18 @@ class AdminCategoryObserver
      */
     public function deleted(Category $category)
     {
-        //
+        Cache::forget('category');
+    }
+
+    /**
+     * Handle the Category "saved" event.
+     *
+     * @param  \App\Models\Category  $category
+     * @return void
+     */
+    public function saved(Category $category)
+    {
+        Cache::forget('category');
     }
 
     /**

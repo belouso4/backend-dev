@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Post;
+use App\Models\User;
 use App\Policies\PostPolicy;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Laravel\Passport\Passport;
@@ -18,7 +19,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
-        //  Post::class => PostPolicy::class
+          Post::class => PostPolicy::class
     ];
 
     /**
@@ -39,6 +40,12 @@ class AuthServiceProvider extends ServiceProvider
         });
 //        Passport::routes();
 
-
+        Gate::define('showPostStatusDisabled', function (User $user, Post $post) {
+            if (!($user->roles()->exists() && $user->can('edit', $post))
+                && $post->status != 1) {
+                return true;
+            }
+            return false;
+        });
     }
 }

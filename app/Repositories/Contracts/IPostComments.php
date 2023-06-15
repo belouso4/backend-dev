@@ -4,6 +4,6 @@ namespace App\Repositories\Contracts;
 
 interface IPostComments
 {
-    public function getCommentsWithUser($column, $value, $offset);
+    public function getCommentsWithUser($column, $value, $offset, $limit);
 
 }

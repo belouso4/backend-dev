@@ -25,11 +25,13 @@ class PostFactory extends Factory
     {
         return [
             'title' => $this->faker->realTextBetween(10, 30, 3),
-//            'subscription' => 0,
             'category_id' => Category::all()->random()->id,
             'excerpt' => $this->faker->text( 120 ),
             'desc' => $this->faker->realText( 2000 ),
             'img' => '300x200.png',
+            'slug' => $this->faker->uuid(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 

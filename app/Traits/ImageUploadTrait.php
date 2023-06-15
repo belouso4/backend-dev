@@ -5,6 +5,7 @@ namespace App\Traits;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image;
 
 trait ImageUploadTrait
 {
@@ -13,19 +14,34 @@ trait ImageUploadTrait
     private $folder;
     private $oldImage;
 
-    public function setImage( ?UploadedFile $uploadedFile, $folder, $oldImage = null)
+    public function setImage($file, $folder, $oldImage = null) : ?string
     {
-            $this->fileName = $this->imageName($uploadedFile);
-            $this->image = $uploadedFile;
-            $this->folder = $folder;
-            $this->oldImage = $oldImage;
+        if (!request()->hasFile($file)) return null;
 
-            return $this->fileName;
+        $this->image = request()->file($file);
+        $this->fileName = $this->imageName($this->image);
+
+        $this->folder = $folder;
+        $this->oldImage = $oldImage;
+
+        return $this->fileName;
     }
 
     public function uploadImage()
     {
         return $this->image->storeAs($this->folder, $this->fileName);
+    }
+
+    public function uploadAvatarImage()
+    {
+        $destinationPath = Storage::path($this->folder).'/small/'. $this->fileName;
+        $thumbnail = Image::make($this->image->getRealPath());
+        $thumbnail->fit(100, 100);
+        $thumbnail->save($destinationPath);
+        $this->image->storeAs($this->folder.'/original', $this->fileName);
+
+//        return $this->image->storeAs($this->folder, $this->fileName);
+        return $this->fileName;
     }
 
     public function updateImage()
@@ -38,17 +54,10 @@ trait ImageUploadTrait
         }
     }
 
-    public function uploadAvatar()
+    public function uploadImageForSlide()
     {
         if($this->fileName) {
-            return $this->uploadImage();
-        }
-    }
-
-    public function updateAvatar()
-    {
-        if($this->fileName) {
-            if ($this->oldImage != 'avatar.png') {
+            if ($this->oldImage) {
                 Storage::delete($this->oldImage);
             }
 
@@ -56,57 +65,41 @@ trait ImageUploadTrait
         }
     }
 
-    public function imageName($image)
+    public function uploadAvatar()
     {
-        $fileName = null;
-
-        if($image) {
-            $replaceRuWords = self::translit($image->getClientOriginalName(), '_');
-            $strToLower = strtolower($replaceRuWords);
-            $replaceSpaces = preg_replace('/\s+/', '_', $strToLower);
-            $fileName = time().'_'.$replaceSpaces;
+        if($this->fileName) {
+            return $this->uploadAvatarImage();
         }
+    }
+
+    public function updateAvatar()
+    {
+        if($this->fileName) {
+            if ($this->oldImage != 'avatar.png') {
+                Storage::delete($this->folder.'/original/'.$this->oldImage);
+                Storage::delete($this->folder.'/small/'.$this->oldImage);
+            }
+
+            return $this->uploadAvatarImage();
+        }
+    }
+
+    public function imageName(UploadedFile $image)
+    {
+        if (!$image) return $image;
+
+        $baseName = basename(
+            $image->getClientOriginalName(),
+            '.'.$image->getClientOriginalExtension()
+        );
+        $replaceWords = Str::slug($baseName,'_');
+        $fileName = time().'_'.$replaceWords. '.' .$image->getClientOriginalExtension();
 
         return $fileName;
     }
 
-    public static function translit($str)
+    public function deleteImage($filePath)
     {
-        $tr = array(
-            "А"=>"A","Б"=>"B","В"=>"V","Г"=>"G",
-            "Д"=>"D","Е"=>"E","Ж"=>"J","З"=>"Z","И"=>"I",
-            "Й"=>"Y","К"=>"K","Л"=>"L","М"=>"M","Н"=>"N",
-            "О"=>"O","П"=>"P","Р"=>"R","С"=>"S","Т"=>"T",
-            "У"=>"U","Ф"=>"F","Х"=>"H","Ц"=>"TS","Ч"=>"CH",
-            "Ш"=>"SH","Щ"=>"SCH","Ъ"=>"","Ы"=>"YI","Ь"=>"",
-            "Э"=>"E","Ю"=>"YU","Я"=>"YA","а"=>"a","б"=>"b",
-            "в"=>"v","г"=>"g","д"=>"d","е"=>"e","ж"=>"j",
-            "з"=>"z","и"=>"i","й"=>"y","к"=>"k","л"=>"l",
-            "м"=>"m","н"=>"n","о"=>"o","п"=>"p","р"=>"r",
-            "с"=>"s","т"=>"t","у"=>"u","ф"=>"f","х"=>"h",
-            "ц"=>"ts","ч"=>"ch","ш"=>"sh","щ"=>"sch","ъ"=>"y",
-            "ы"=>"yi","ь"=>"'","э"=>"e","ю"=>"yu","я"=>"ya",
-            " "=>"_","?"=>"_","/"=>"_","\\"=>"_",
-            "*"=>"_",":"=>"_","*"=>"_","\""=>"_","<"=>"_",
-            ">"=>"_","|"=>"_"
-        );
-        return strtr($str,$tr);
+        Storage::delete($filePath);
     }
-
-//    private function storeImage($post)
-//    {
-//
-//        if (request()->hasFile('image')){
-//            $image_path = "/storage/".'prev_img_name';  // prev image path
-//            if(File::exists($image_path)) {
-//                File::delete($image_path);
-//            }
-//            $post->update([
-//                'image' => request()->image->store('uploads', 'public'),
-//            ]);
-//
-//            $image = Image::make(public_path('storage/'.$post->image))->fit(750, 300);
-//            $image->save();
-//        }
-//    }
 }

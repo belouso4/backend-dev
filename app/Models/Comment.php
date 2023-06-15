@@ -5,8 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-use Request;
-
 class Comment extends Model
 {
     use HasFactory;
@@ -18,23 +16,14 @@ class Comment extends Model
         'body'
     ];
 
-//    protected $dates = ['created_at'];
-
-
-
-//    public function getCreatedAtAttribute($value)
-//    {
-//        return $value->format('d/m/Y');
-//    }
-
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function users()
+    public function post()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsTo(Post::class);
     }
 
     public function replies()

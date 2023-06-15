@@ -16,6 +16,10 @@ use App\Http\Controllers\API\Admin\GeneralController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\API\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\Account\LikedController;
+use App\Http\Controllers\API\Account\ViewedController;
+use App\Http\Controllers\API\Account\CommentedController;
+use App\Http\Controllers\API\Admin\UploadImgQuillController;
 
 
 Route::group(['prefix' => 'v1'], function(){
@@ -62,6 +66,13 @@ Route::group(['prefix' => 'v1'], function(){
         Route::post('/article/{post}/comment', [PostCommentsController::class, 'store']);
         Route::post('/article/comment/{comment}/like', [PostCommentsController::class, 'like']);
 
+        /**
+         * Auth Account Routes
+         */
+        Route::get('/account/liked', LikedController::class);
+        Route::get('/account/viewed', ViewedController::class);
+        Route::get('/account/commented', CommentedController::class);
+
     });
 
     Route::group(['prefix' => 'admin', 'middleware' => ['auth:sanctum','isAdmin']], function () {
@@ -72,12 +83,14 @@ Route::group(['prefix' => 'v1'], function(){
         Route::get('/posts', [AdminPostController::class, 'index']);
         Route::post('/post/create', [AdminPostController::class, 'store']);
         Route::get('/post/{post}/edit', [AdminPostController::class, 'edit'])->withTrashed();
-        Route::put('/post/update/{post}', [AdminPostController::class, 'update']);
+        Route::put('/post/update/{post}', [AdminPostController::class, 'update'])->withTrashed();
         Route::delete('/post/delete/{id}', [AdminPostController::class, 'destroy']);
         Route::put('/post/restore/{id}', [AdminPostController::class, 'restore']);
         Route::get('/posts/trashed', [AdminPostController::class, 'getDeletedPosts']);
         Route::delete('/posts/clear-trashed/{id}', [AdminPostController::class, 'forceDelete']);
         Route::get('/posts/search', [AdminPostController::class, 'search']);
+
+        Route::post('/post/upload', UploadImgQuillController::class);
 
         /**
          * Admin Post Сomments Routes
@@ -139,7 +152,6 @@ Route::group(['prefix' => 'v1'], function(){
         /**
          * Admin General Routes
          */
-        Route::get('/search', [GeneralController::class, 'search']);
         Route::put('/profile', [GeneralController::class, 'profile']);
 
         /**

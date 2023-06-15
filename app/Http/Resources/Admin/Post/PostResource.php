@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\Admin\Post;
 
+use App\Helper\Helper;
 use App\Http\Resources\Admin\Tag\TagResource;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class PostResource extends JsonResource
 {
@@ -19,7 +19,7 @@ class PostResource extends JsonResource
             'title' => $this->title,
             'category_id' => $this->category_id,
             'desc' => $this->desc,
-            'img' => Storage::url($this->img),
+            'img' => Helper::getPathIfExist('posts/', $this->img),
             'status' => $this->status,
             'tags' => TagResource::collection($this->tags),
             'meta_title' => $this->meta_title,

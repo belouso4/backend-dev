@@ -2,20 +2,25 @@
 
 namespace App\Models;
 
+use App\Helper\Helper;
 use App\Notifications\ResetPasswordApi;
 use App\Traits\HasRolesAndPermissions;
 use Carbon\Carbon;
-//use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\VerifyApiEmailNotification;
+use Laravel\Scout\Searchable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRolesAndPermissions;
+    use HasApiTokens,
+        HasFactory,
+        Notifiable,
+        HasRolesAndPermissions,
+        Searchable;
 
     protected $fillable = [
         'name',
@@ -29,47 +34,51 @@ class User extends Authenticatable implements MustVerifyEmail
         'banned_until'
     ];
 
-    public function setBannedUntilAttribute($value) {
-        $this->attributes['banned_until'] = is_null($value) ? null : Carbon::parse($value);
-    }
-
-//    public function setStatusAttribute($value) {
-//        $this->attributes['status'] = $value ? 1 : 0;
-//    }
-
     protected $perPage = 10;
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password',
         'remember_token',
         'pivot'
     ];
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+
+//    protected $casts = [
+//        'email_verified_at' => 'datetime',
+//    ];
 
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);
     }
 
-    public function likes(){
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'avatar' => Helper::getPathIfExist('avatar/small/', $this->avatar),
+            'model' => 'user',
+        ];
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function likes()
+    {
         return $this->belongsToMany( 'App\Models\Post', 'users_posts_likes', 'user_id', 'post_id');
     }
 
-//    public function role() {
-//        return $this->belongsTo(User::class);
-//    }
+    public function setBannedUntilAttribute($value)
+    {
+        $this->attributes['banned_until'] =
+            is_null($value)
+                ? null
+                : Carbon::parse($value);
+    }
 
     public function sendApiEmailVerificationNotification()
     {

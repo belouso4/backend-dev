@@ -12,7 +12,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     environment:
       TZ: Europe/Moscow
-#    user: 1000:1000
+    user: 1000:1000
     depends_on:
       - db
     networks:
@@ -79,6 +79,37 @@ services:
       - db
     ports:
       - 8888:80
+    networks:
+      - api.dev-network
+
+  # Meilisearch
+  mysite-meilisearch:
+    user: root
+    hostname: api.itsownhouse.local
+    image: getmeili/meilisearch:latest
+    container_name: meilisearch
+    volumes:
+      - ./_docker/meilisearch/data.ms:/data.ms
+    ports:
+      - 7700:7700
+    environment:
+      MEILI_MASTER_KEY: "masterKey"
+    networks:
+      - api.dev-network
+
+  queue-worker:
+    build:
+      context: .
+      dockerfile: _docker/app/Dockerfile
+    container_name: queue
+    stop_signal: SIGTERM
+    working_dir: /var/www/
+    restart: always
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - web
+    command: php artisan queue:work --tries=3 -n -q
     networks:
       - api.dev-network
 

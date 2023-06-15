@@ -6,7 +6,6 @@ use App\Http\Requests\AdminRoleCreateRequest;
 use App\Http\Requests\AdminRoleUpdateRequest;
 use App\Http\Resources\Admin\Role\RoleResource;
 use App\Http\Resources\Admin\Role\RolesResource;
-use App\Http\Resources\Admin\User\UserResource;
 use App\Models\Role;
 use App\Models\User;
 use App\Repositories\Contracts\IPermission;
@@ -146,9 +145,8 @@ class RolesController extends AdminController
             $pathFile = 'new_user.'.$key.'.avatar';
 
             if(request()->hasFile($pathFile)) {
-                $file = request()->file($pathFile);
-                $this->setImage($file, '/avatar');
-                $user->avatar = $this->uploadAvatar();
+                $user->avatar = $this->setImage($pathFile, '/avatar');
+                $this->uploadAvatar();
             }
 
             $user->save();

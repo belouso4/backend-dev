@@ -58,11 +58,19 @@ class PostCommentsController extends AdminController
 
         if($comment->isLikedByUser($user_id)){
             $comment->likes()->detach($user_id);
+            $like_my = 0;
+
         } else {
             $comment->likes()->attach($user_id);
+            $like_my = 1;
         }
 
-        return response()->json( $comment->likes()->count(), 201 );
+        return response()->json(
+            [
+                'like_count' => $comment->likes()->count(),
+                'like_my' => $like_my
+            ]
+        );
     }
 
     public function show($id)
@@ -83,6 +91,6 @@ class PostCommentsController extends AdminController
     public function destroy(Comment $comment)
     {
         $comment->deleteWithReplies();
-        return response()->json(null. 204);
+        return response()->json(null, 204);
     }
 }

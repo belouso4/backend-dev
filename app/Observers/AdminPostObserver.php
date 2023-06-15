@@ -2,6 +2,8 @@
 
 namespace App\Observers;
 
+use App\Jobs\DeletePostFromIndex;
+use App\Jobs\UpdatePostInIndex;
 use App\Models\Post;
 
 class AdminPostObserver
@@ -13,7 +15,14 @@ class AdminPostObserver
 
     public function created(Post $post)
     {
-        //
+        UpdatePostInIndex::dispatch($post);
+    }
+
+    public function updated(Post $post)
+    {
+        if(is_null($post->deleted_at)) {
+            UpdatePostInIndex::dispatch($post);
+        }
     }
 
     public function updating(Post $post)
@@ -31,13 +40,12 @@ class AdminPostObserver
 
     public function deleting(Post $post)
     {
-//        dd('fffff');
-        $post->update(['status' => '0']);
+        DeletePostFromIndex::dispatch($post->id);
     }
 
     public function deleted(Post $post)
     {
-//        $post->update(['status' => '0']);
+        $post->update(['status' => '0']);
     }
 
     public function restored(Post $post)

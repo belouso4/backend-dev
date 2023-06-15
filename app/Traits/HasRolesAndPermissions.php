@@ -11,9 +11,18 @@ trait HasRolesAndPermissions {
         return $this->belongsToMany(Role::class,'users_roles');
     }
 
-    public function getRoleAttribute()
+    public function getRoleSlug()
     {
-        return $this->roles->first();
+        return $this->roles->first() ? $this->roles->first()->slug : '';
+    }
+
+    public function permissions()
+    {
+        return $this->roles()->with('permissions')->get()
+            ->pluck('permissions')
+            ->flatten()
+            ->pluck('name')
+            ->unique()->toArray();
     }
 
     public function hasRole(...$roles) {

@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources\Admin\Post;
 
+use App\Helper\Helper;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class PostsResource extends JsonResource
 {
@@ -16,28 +16,11 @@ class PostsResource extends JsonResource
             'slug' => $this->slug,
             'created_at' => $this->created_at->format('d.m.Y'),
             'title' => $this->title,
-            'img' => Storage::url($this->img),
+            'img' => Helper::getPathIfExist('posts/', $this->img),
             'status' => $this->status,
-            'url' => $this->getUrl($this->category, $this->slug),
+            'url' => Helper::getUrlWithSlugCategory($this->category, $this->slug),
         ];
     }
 
-    public function getUrl($category, $slug)
-    {
-        $url = $this->recursiveAddSlugCategory($category);
-        return '/' . implode('/', array_reverse($url)) . '/article/' . $slug;
-    }
 
-    public function recursiveAddSlugCategory( $input) {
-        $even[] = $input->slug;
-
-        if( $input->parent ) {
-            $even = array_merge(
-                $even,
-                $this->recursiveAddSlugCategory( $input->parent)
-            );;
-        }
-
-        return $even;
-    }
 }

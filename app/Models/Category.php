@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\CategoryDeleted;
+use App\Events\CategorySaved;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

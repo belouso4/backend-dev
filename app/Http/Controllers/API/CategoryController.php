@@ -16,10 +16,15 @@ class CategoryController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $categories = Category::whereNull('parent_id')
-            ->orderBy('order')
-            ->with('children')
-            ->get();
+        $categories = cache('category');
+
+        if ($categories === null) {
+            cache(['category' => $categories = Category::whereNull('parent_id')
+                ->orderBy('order')
+                ->with('children')
+                ->get()
+            ], now()->addDay());
+        }
 
         return response()->json($categories);
     }

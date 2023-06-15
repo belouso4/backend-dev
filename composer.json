@@ -6,15 +6,16 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
-        "cviebrock/eloquent-sluggable": "^8.0",
         "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^7.0.1",
+        "guzzlehttp/guzzle": "^7.5",
         "intervention/image": "^2.7",
         "intervention/imagecache": "^2.6",
         "laravel/framework": "^8.54",
         "laravel/sanctum": "^2.11",
+        "laravel/scout": "^9.8",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^3.3",
+        "meilisearch/meilisearch-php": "^1.1",
         "predis/predis": "^2.1"
     },
     "require-dev": {
@@ -61,7 +62,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

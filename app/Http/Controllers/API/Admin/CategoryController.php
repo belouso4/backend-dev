@@ -17,7 +17,7 @@ class CategoryController extends AdminController
     public function __construct()
     {
         $this->middleware('can:viewAny,App\Models\Category');
-        $this->middleware('can:edit,category')->only(['update', 'updateMenu']);
+        $this->middleware('can:update,App\Models\Category')->only(['update', 'updateMenu']);
         $this->middleware('can:create,App\Models\Category')->only(['store']);
         $this->middleware('can:delete,category')->only(['destroy']);
     }
@@ -101,6 +101,9 @@ class CategoryController extends AdminController
      */
     public function destroy(Category $category)
     {
+        if ($category->posts()->exists()) {
+            return response()->json('Категорию с постами запрещено удалять', 409);
+        }
         $category->children()->delete();
         $category->delete();
 

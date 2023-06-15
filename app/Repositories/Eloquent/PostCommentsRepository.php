@@ -12,15 +12,15 @@ class PostCommentsRepository extends BaseRepository implements IPostComments
         return Model::class;
     }
 
-    public function getCommentsWithUser($column, $value, $offset)
+    public function getCommentsWithUser($column, $value, $offset, $limit = 4)
     {
         return $this->model->withTrashed()->where($column, $value)
             ->select(['id'])
             ->withCount('comments')
-            ->with(['comments' => function($comments) use ($offset) {
+            ->with(['comments' => function($comments) use ($offset, $limit) {
                 $comments->withCount(['likes', 'userLike']);
                 $comments->with(['replies', 'user:id,name,avatar']);
-                $comments->skip($offset)->take(4);
+                $comments->skip($offset)->take($limit);
             }])
             ->first();
     }

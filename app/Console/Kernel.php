@@ -2,8 +2,10 @@
 
 namespace App\Console;
 
+use App\Console\Commands\MeiliSearch\DeleteAllIndexesCommand;
+use App\Console\Commands\MeiliSearch\FlushModelsCommand;
+use App\Console\Commands\MeiliSearch\ImportModelsCommand;
 use App\Console\Commands\StatusUpdate;
-use App\Models\User;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -15,7 +17,10 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        StatusUpdate::class
+        StatusUpdate::class,
+        ImportModelsCommand::class,
+        FlushModelsCommand::class,
+        DeleteAllIndexesCommand::class
     ];
 
     /**
