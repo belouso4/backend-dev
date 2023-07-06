@@ -7,49 +7,32 @@ use App\Http\Requests\AdminCategoryCreateRequest;
 use App\Http\Requests\AdminCheckDuplicateSlug;
 use App\Http\Resources\Admin\Category\CategoriesResource;
 use App\Models\Category;
-use App\Rules\CheckDuplicateSlug;
+use App\Repositories\Contracts\ICategory;
 use Illuminate\Http\Request;
-use function GuzzleHttp\Promise\all;
 
 class CategoryController extends AdminController
 {
+    protected $category;
 
     public function __construct()
     {
-        $this->middleware('can:viewAny,App\Models\Category');
-        $this->middleware('can:update,App\Models\Category')->only(['update', 'updateMenu']);
-        $this->middleware('can:create,App\Models\Category')->only(['store']);
+        $this->middleware('can:viewAny,'.Category::class);
+        $this->middleware('can:update,'.Category::class)->only(['update', 'updateMenu']);
+        $this->middleware('can:create,'.Category::class)->only(['store']);
         $this->middleware('can:delete,category')->only(['destroy']);
+
+        $this->category = app(ICategory::class);
     }
 
     public function index(Request $request)
     {
         $query = $request->query('fetch');
 
-        $categories = Category::query()->when(!$query, function ($q, $category) {
-            return $q->orderBy('order')->whereNull('parent_id')
-                ->with('children');
-        })->get();
+        $categories = $this->category->getCategories($query);
 
         return CategoriesResource::collection($categories);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(AdminCategoryCreateRequest $request)
     {
         $category = Category::create($request->all());
@@ -57,35 +40,6 @@ class CategoryController extends AdminController
         return response()->json('ok');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update(AdminCategoryCreateRequest $request, Category $category)
     {
         $category->update($request->all(['name', 'slug']));
@@ -93,12 +47,6 @@ class CategoryController extends AdminController
         return response()->json();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy(Category $category)
     {
         if ($category->posts()->exists()) {
@@ -124,10 +72,7 @@ class CategoryController extends AdminController
             $order++;
         }
 
-        $categories =  Category::where('parent_id', null)
-            ->orderBy('order')
-            ->with('children')
-            ->get();
+        $categories =  $this->category->getCategoriesWhereParentIdNull();
 
         return CategoriesResource::collection($categories);
     }

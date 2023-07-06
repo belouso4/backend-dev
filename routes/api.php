@@ -20,6 +20,8 @@ use App\Http\Controllers\API\Account\LikedController;
 use App\Http\Controllers\API\Account\ViewedController;
 use App\Http\Controllers\API\Account\CommentedController;
 use App\Http\Controllers\API\Admin\UploadImgQuillController;
+use App\Http\Controllers\API\OtherController;
+use App\Http\Controllers\API\TagController;
 
 
 Route::group(['prefix' => 'v1'], function(){
@@ -51,9 +53,16 @@ Route::group(['prefix' => 'v1'], function(){
     Route::get('/categories', CategoryController::class);
 
     /**
-     * Category Routes
+     * Slider Routes
      */
-    Route::get('/other/sliders', [\App\Http\Controllers\API\OtherController::class, 'index']);
+    Route::get('/other/sliders', [OtherController::class, 'index']);
+
+    /**
+     * Tag Routes
+     */
+    Route::apiResource('tags', TagController::class)->only(['index', 'show']);
+//    Route::get('/tags', [TagController::class, 'index']);
+//    Route::get('/tag/{slug}', [TagController::class, 'show']);
 
     Route::group(['middleware' => ['auth:sanctum']], function(){
         Route::get('/user', [UsersController::class, 'show']);
@@ -169,8 +178,6 @@ Route::group(['prefix' => 'v1'], function(){
         Route::put('/other/slider/update', [\App\Http\Controllers\API\Admin\OtherController::class, 'upload']);
         Route::delete('/other/slider/{id}', [\App\Http\Controllers\API\Admin\OtherController::class, 'delete']);
     });
-
-
 
 //    Route::post('/companies','API\PostController@store');
 //    Route::put('/companies/{company}','API\PostController@update');

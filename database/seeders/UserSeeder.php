@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
 
 //        User::factory()->count(30)->create();
 
-        for ($i = 0; $i < 1000; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             $user = UserFactory::new()->make();
 
             $data[] = [
@@ -37,7 +37,7 @@ class UserSeeder extends Seeder
             ];
         }
 
-        $chunks = array_chunk($data, 1000);
+        $chunks = array_chunk($data, 100);
 
         foreach ($chunks as $chunk) {
             User::insert($chunk);

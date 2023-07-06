@@ -30,8 +30,13 @@ class User extends Authenticatable implements MustVerifyEmail
         'status'
     ];
 
-    protected $dates = [
-        'banned_until'
+//    protected $dates = [
+//        'banned_until'
+//    ];
+
+    protected $casts = [
+        'banned_until' => 'datetime',
+//        'email_verified_at' => 'datetime',
     ];
 
     protected $perPage = 10;
@@ -41,10 +46,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
         'pivot'
     ];
-
-//    protected $casts = [
-//        'email_verified_at' => 'datetime',
-//    ];
 
     public function setPasswordAttribute($value)
     {

@@ -10,12 +10,6 @@ use Illuminate\Support\Facades\Storage;
 class UploadImgQuillController extends Controller
 {
     use ImageUploadTrait;
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function __invoke(Request $request)
     {
         if ($request['delete_file']) {

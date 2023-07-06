@@ -22,6 +22,7 @@ class TagRepository extends BaseRepository implements ITag {
     {
         return $this->model
             ->where('tag', 'like', "%$query%")
+            ->orWhere('slug', 'like', "%$query%")
             ->paginate();
     }
 }

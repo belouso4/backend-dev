@@ -13,6 +13,7 @@
         "laravel/framework": "^8.54",
         "laravel/sanctum": "^2.11",
         "laravel/scout": "^9.8",
+        "laravel/telescope": "^4.14",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^3.3",
         "meilisearch/meilisearch-php": "^1.1",
@@ -56,7 +57,9 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [
+                "laravel/telescope"
+            ]
         }
     },
     "config": {

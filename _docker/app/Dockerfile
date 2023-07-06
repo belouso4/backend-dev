@@ -1,6 +1,6 @@
 FROM php:8.0-fpm
 
-USER root
+#USER root
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
@@ -19,7 +19,8 @@ RUN apt-get update && apt-get install -y \
         libxml2-dev \
         zip \
         sudo \
-        unzip
+        unzip \
+        vim
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

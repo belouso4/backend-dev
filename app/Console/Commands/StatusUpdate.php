@@ -38,7 +38,6 @@ class StatusUpdate extends Command
      */
     public function handle()
     {
-
             $users =  User::whereNotNull('banned_until')->get();
 
             foreach ($users as $user) {

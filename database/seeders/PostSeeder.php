@@ -29,8 +29,8 @@ class PostSeeder extends Seeder
                 'desc' => $faker->realText( 100 ),
                 'img' => '300x200.png',
                 'slug' => $faker->uuid(),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => now()->addMinutes(10 + $i),
+                'updated_at' => now()->addMinutes(10 + $i),
             ];
         }
 
@@ -40,10 +40,10 @@ class PostSeeder extends Seeder
             Post::insert($chunk);
         }
 
-//        foreach (Post::cursor() as $post) {
-//            $tags = Tag::inRandomOrder()->limit(random_int(2, 5))->get(['id']);
-//            $post->tags()->attach($tags);
-//        }
+        foreach (Post::cursor() as $post) {
+            $tags = Tag::inRandomOrder()->limit(random_int(2, 5))->get(['id']);
+            $post->tags()->attach($tags);
+        }
 
         $time_elapsed_secs = microtime(true) - $start;
         \Log::info($time_elapsed_secs);

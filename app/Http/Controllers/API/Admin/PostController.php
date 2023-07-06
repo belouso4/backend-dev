@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Http\Resources\Admin\Post\PostsResource;
+use App\Models\Slider;
 use App\Traits\ImageUploadTrait;
 use App\Http\Requests\AdminPostCreateRequest;
 use App\Http\Requests\AdminPostUpdateRequest;
@@ -83,7 +84,10 @@ class PostController extends AdminController
 
     public function destroy($id)
     {
-        $post = $this->postRepository
+       $slider_exist = Slider::whereIn('post_id', explode(",", $id))->count();
+       if ($slider_exist) return response()->json('Удаление не возможно! Этот пост используется в слайдере!', 409);
+
+        $this->postRepository
             ->delete(explode(",", $id));
 
         return response()->json(null, 204);

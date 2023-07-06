@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Post\PostResource;
+use App\Http\Resources\Post\PostWithTitleResource;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\PostView;
@@ -20,9 +21,13 @@ class PostController extends Controller
             ->withCount('postView')
             ->where('status', '=', '1')
             ->orderBy('created_at', 'DESC')
-            ->paginate(7);
+            ->paginate(10);
 
-        return PostResource::collection($posts);
+        request()->request->add(['title_main' => $category->name]);
+
+        return (int)request()->query('page') === 1
+            ? new PostWithTitleResource($posts)
+            : PostResource::collection($posts);
     }
 
     public function show(Post $post)

@@ -14,10 +14,16 @@ class CreateUsersPostsLikes extends Migration
     public function up()
     {
         Schema::create('users_posts_likes', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->unsignedBigInteger('post_id')->unsigned();
-            $table->foreign('post_id')->references('id')->on('posts');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+            $table->unsignedBigInteger('post_id');
+            $table->foreign('post_id')
+                ->references('id')
+                ->on('posts')
+                ->onDelete('cascade');
             $table->primary(['user_id', 'post_id']);
         });
     }

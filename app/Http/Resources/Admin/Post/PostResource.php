@@ -19,12 +19,13 @@ class PostResource extends JsonResource
             'title' => $this->title,
             'category_id' => $this->category_id,
             'desc' => $this->desc,
+            'excerpt' => $this->excerpt ?? '',
             'img' => Helper::getPathIfExist('posts/', $this->img),
             'status' => $this->status,
             'tags' => TagResource::collection($this->tags),
-            'meta_title' => $this->meta_title,
-            'meta_desc' => $this->meta_desc,
-            'meta_keywords' => $this->meta_keywords,
+            'meta_title' => $this->meta_title ?? '',
+            'meta_desc' => $this->meta_desc ?? '',
+            'meta_keywords' => $this->meta_keywords ?? '',
         ];
     }
 }

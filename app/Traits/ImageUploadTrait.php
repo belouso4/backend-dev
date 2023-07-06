@@ -29,7 +29,9 @@ trait ImageUploadTrait
 
     public function uploadImage()
     {
-        return $this->image->storeAs($this->folder, $this->fileName);
+        if($this->fileName) {
+            return $this->image->storeAs($this->folder, $this->fileName);
+        }
     }
 
     public function uploadAvatarImage()

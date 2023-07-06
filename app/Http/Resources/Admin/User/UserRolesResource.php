@@ -15,18 +15,14 @@ class UserRolesResource extends JsonResource
      */
     public function toArray($request)
     {
-        $role = $this->roles()->exists()
-            ? $this->roles()->first()->only(['id'])
-            : '';
-
         return [
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
             'avatar' => Storage::url($this->avatar),
             'role' => [
-                'name' => $this->role->name,
-                'desc' => $this->role->desc,
+                'name' => $this->roles[0]->name,
+                'desc' => $this->roles[0]->desc,
             ],
         ];
     }

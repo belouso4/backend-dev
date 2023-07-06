@@ -31,11 +31,6 @@ class UsersController extends AdminController
         return UserResource::collection($users);
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(AdminUserCreateRequest $request)
     {
         $user = new User($request->all());
@@ -46,11 +41,6 @@ class UsersController extends AdminController
         $user->roles()->attach($request['role_id']);
 
         return response()->json(['id' => $user->id]);
-    }
-
-    public function show(User $user)
-    {
-
     }
 
     public function edit(User $user)

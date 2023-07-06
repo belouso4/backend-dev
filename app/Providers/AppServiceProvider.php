@@ -14,7 +14,9 @@ use App\Observers\AdminRoleObserver;
 use App\Observers\AdminTagObserver;
 use App\Observers\CommentObserver;
 use App\Observers\UserObserver;
+use App\Repositories\Contracts\ICategory;
 use App\Repositories\Contracts\IComment;
+use App\Repositories\Contracts\IOther;
 use App\Repositories\Contracts\IPermission;
 use App\Repositories\Contracts\IPost;
 use App\Repositories\Contracts\IPostComments;
@@ -22,7 +24,9 @@ use App\Repositories\Contracts\IRole;
 use App\Repositories\Contracts\ITag;
 use App\Repositories\Contracts\IUser;
 use App\Repositories\Contracts\IUserRoles;
+use App\Repositories\Eloquent\CategoryRepository;
 use App\Repositories\Eloquent\CommentRepository;
+use App\Repositories\Eloquent\OtherRepository;
 use App\Repositories\Eloquent\PermissionRepository;
 use App\Repositories\Eloquent\PostCommentsRepository;
 use App\Repositories\Eloquent\PostRepository;
@@ -50,6 +54,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(IPostComments::class,PostCommentsRepository::class);
         $this->app->bind(IComment::class,CommentRepository::class);
         $this->app->bind(IUserRoles::class,UserRolesRepository::class);
+        $this->app->bind(ICategory::class,CategoryRepository::class);
+        $this->app->bind(IOther::class,OtherRepository::class);
+
+        if ($this->app->environment('local')) {
+            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
+            $this->app->register(TelescopeServiceProvider::class);
+        }
     }
 
     /**

@@ -12,9 +12,10 @@ services:
       - /etc/localtime:/etc/localtime:ro
     environment:
       TZ: Europe/Moscow
-    user: 1000:1000
+#    user: 1000:1000
     depends_on:
       - db
+      - redis
     networks:
       - api.dev-network
   web:
@@ -35,28 +36,6 @@ services:
       - api.dev-network
       - client_dev-network
 
-  redis:
-    image: redis:4.0
-    container_name: app_redis
-    ports:
-      - '6379:6379'
-    networks:
-      - api.dev-network
-
-  db:
-    image: mysql:8.0.25
-    volumes:
-      - ./tmp/db:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: my-secret-pw
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_USER: ${DB_USERNAME}
-    ports:
-      - 3306:3306
-    networks:
-      - api.dev-network
-
   mailhog:
     image: mailhog/mailhog:latest
     logging:
@@ -66,7 +45,6 @@ services:
       - 8025:8025
     networks:
       - api.dev-network
-
 
   pma:
     image: phpmyadmin:latest
@@ -83,7 +61,7 @@ services:
       - api.dev-network
 
   # Meilisearch
-  mysite-meilisearch:
+  meilisearch:
     user: root
     hostname: api.itsownhouse.local
     image: getmeili/meilisearch:latest
@@ -94,6 +72,8 @@ services:
       - 7700:7700
     environment:
       MEILI_MASTER_KEY: "masterKey"
+    depends_on:
+      - web
     networks:
       - api.dev-network
 
@@ -113,9 +93,50 @@ services:
     networks:
       - api.dev-network
 
+  scheduler:
+    build:
+      context: .
+      dockerfile: _docker/scheduler/Dockerfile
+    container_name: scheduler
+    working_dir: /var/www/
+    depends_on:
+      - web
+    volumes:
+      - .:/var/www
+    networks:
+      - api.dev-network
+#    env_file: .env
+
+  redis:
+    image: redis:4.0
+    container_name: app_redis
+    ports:
+      - '6379:6379'
+    networks:
+      - api.dev-network
+    volumes:
+      - redis:/data
+
+  db:
+    image: mysql:8.0.25
+    volumes:
+      - ./tmp/db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+    ports:
+      - 3306:3306
+    networks:
+      - api.dev-network
+
 networks:
   api.dev-network:
     driver: bridge
   client_dev-network:
     external: true
 
+volumes:
+  redis:
+    driver: "local"
