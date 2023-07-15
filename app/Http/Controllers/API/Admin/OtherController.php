@@ -62,7 +62,7 @@ class OtherController extends AdminController
     public function upload(Request $request)
     {
         $slide = $this->slider->find($request['id']);
-        $this->setImage($request->file('img'), 'slider', $slide->img);
+        $this->setImage('img', 'slider', $slide->img);
         $slide->update([
            'img' => $this->uploadImageForSlide()
         ]);

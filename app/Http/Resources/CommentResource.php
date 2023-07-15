@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Helper\Helper;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class CommentResource extends JsonResource
 {
@@ -19,16 +19,19 @@ class CommentResource extends JsonResource
             'body' => $this->body,
             'created_at' => $this->created_at->format('d/m/Y'),
             'id' => $this->id,
-            'likes_count' => $this->likes_count,
+            'likes_count' => $this->likes_count ?? 0,
             'parent_id' => $this->parent_id,
             'replies' => CommentResource::collection($this->replies),
             'user' => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,
-                'avatar' => Storage::url($this->user->avatar) ,
+                'avatar' => [
+                    'small' => Helper::getPathIfExist('avatar/small/', $this->user->avatar),
+                    'original' => Helper::getPathIfExist('avatar/original/', $this->user->avatar),
+                ],
             ],
             'user_id' => $this->user_id,
-            'user_like_count' => $this->user_like_count
+            'user_like_count' => $this->user_like_count ?? 0
         ];
     }
 }

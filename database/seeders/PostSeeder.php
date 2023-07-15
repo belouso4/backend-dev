@@ -25,7 +25,7 @@ class PostSeeder extends Seeder
             $data[] = [
                 'title' => $faker->realTextBetween(10, 30, 3),
                 'category_id' => Category::all()->random()->id,
-                'excerpt' => $faker->text( 50 ),
+                'excerpt' => $faker->text( 380 ),
                 'desc' => $faker->realText( 100 ),
                 'img' => '300x200.png',
                 'slug' => $faker->uuid(),

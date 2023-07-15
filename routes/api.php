@@ -22,6 +22,8 @@ use App\Http\Controllers\API\Account\CommentedController;
 use App\Http\Controllers\API\Admin\UploadImgQuillController;
 use App\Http\Controllers\API\OtherController;
 use App\Http\Controllers\API\TagController;
+use App\Http\Controllers\API\AllPostsController;
+use App\Http\Controllers\API\Admin\MainController;
 
 
 Route::group(['prefix' => 'v1'], function(){
@@ -46,6 +48,7 @@ Route::group(['prefix' => 'v1'], function(){
     Route::get('/category/{category}/articles', [PostController::class, 'index']);
     Route::get('/article/{post}', [PostController::class, 'show']);
     Route::get('/article/{post}/comments', [PostCommentsController::class, 'index']);
+    Route::get('/articles', AllPostsController::class);
 
     /**
      * Category Routes
@@ -53,9 +56,10 @@ Route::group(['prefix' => 'v1'], function(){
     Route::get('/categories', CategoryController::class);
 
     /**
-     * Slider Routes
+     * Other Routes
      */
     Route::get('/other/sliders', [OtherController::class, 'index']);
+    Route::get('/other/posts', [OtherController::class, 'getPostsByType']);
 
     /**
      * Tag Routes
@@ -85,6 +89,8 @@ Route::group(['prefix' => 'v1'], function(){
     });
 
     Route::group(['prefix' => 'admin', 'middleware' => ['auth:sanctum','isAdmin']], function () {
+        Route::get('/characteristics', [MainController::class, 'characteristics']);
+        Route::get('/post-rating', [MainController::class, 'postRating']);
 
         /**
          * Admin Post Routes

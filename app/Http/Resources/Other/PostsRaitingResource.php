@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Admin\Other;
+namespace App\Http\Resources\Other;
 
-use App\Helper\Helper;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
-class SliderResource extends JsonResource
+class PostsRaitingResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,8 +16,10 @@ class SliderResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'created_at' => $this->created_at->diffForHumans(),
             'title' => $this->title,
-            'img' => Helper::getPathIfExist('posts/', $this->img),
+            'post_view_count' => $this->post_view_count,
+            'likes_count' => $this->likes_count,
         ];
     }
 }

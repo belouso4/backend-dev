@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Slider;
 
+use App\Helper\Helper;
 use App\Http\Resources\Tag\TagResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
@@ -23,8 +24,8 @@ class MainSliderResource extends JsonResource
             'title' => $this->post->title,
             'excerpt' => $this->post->excerpt,
             'img' => $this->img
-                ? Storage::url($this->img)
-                : Storage::url($this->post->img),
+                ? Helper::getPathIfExist('slider/', $this->img)
+                : Helper::getPathIfExist('posts/', $this->post->img),
 //            'tags' => TagResource::collection($this->tags),
         ];
     }

@@ -21,10 +21,15 @@ class Helper
             ceil($value * $mult) / $mult;
     }
 
-    public static function getUrlWithSlugCategory($category, $slug)
+    public static function getUrlWithSlugCategory($category, $slug = null)
     {
         $url = self::recursiveAddSlugCategory($category);
-        return '/' . implode('/', array_reverse($url)) . '/article/' . $slug;
+
+        if ($slug) {
+            return '/' . implode('/', array_reverse($url)) . '/article/' . $slug;
+        }
+
+        return '/' . implode('/', array_reverse($url));
     }
 
     private static function  recursiveAddSlugCategory( $input)
@@ -35,7 +40,7 @@ class Helper
             $even = array_merge(
                 $even,
                 self::recursiveAddSlugCategory( $input->parent)
-            );;
+            );
         }
 
         return $even;
