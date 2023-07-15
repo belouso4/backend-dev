@@ -10,6 +10,7 @@ services:
       - ./:/var/www
     depends_on:
       - db
+      - redis
     networks:
       - api-network
 
@@ -25,11 +26,67 @@ services:
       - ./_docker/prod/nginx/conf.d:/etc/nginx/conf.d
 #      - ./storage/app:/var/www/storage/app:ro
     ports:
-      - 8000:80
+      - 80:80
     depends_on:
       - app
     networks:
       - api-network
+      - client-network
+
+  meilisearch:
+    user: root
+    hostname: api.itsownhouse.local
+    image: getmeili/meilisearch:latest
+    container_name: meilisearch
+    volumes:
+      - meilisearch:/data.ms
+    ports:
+      - 7700:7700
+    environment:
+      MEILI_MASTER_KEY: "masterKey"
+    depends_on:
+      - web
+    networks:
+      - api-network
+
+  queue-worker:
+    build:
+      context: .
+      dockerfile: _docker/app/Dockerfile
+    container_name: queue
+    stop_signal: SIGTERM
+    working_dir: /var/www/
+    restart: always
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - web
+    command: php artisan queue:work --tries=3 -n -q
+    networks:
+      - api-network
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: _docker/scheduler/Dockerfile
+    container_name: scheduler
+    working_dir: /var/www/
+    depends_on:
+      - web
+    volumes:
+      - .:/var/www
+    networks:
+      - api-network
+
+  redis:
+    image: redis:4.0
+    container_name: app_redis
+    ports:
+      - '6379:6379'
+    networks:
+      - api-network
+    volumes:
+      - redis:/data
 
   db:
     image: mysql:8.0.25
@@ -50,6 +107,14 @@ services:
 volumes:
   dbdata:
     driver: local
+  meilisearch:
+    driver: local
+  redis:
+    driver: local
+
 networks:
   api-network:
     driver: bridge
+  client-network:
+    external: true
+

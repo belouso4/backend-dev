@@ -8,8 +8,8 @@ services:
 #    working_dir: /var/www
     volumes:
       - ./:/var/www
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
+#      - /etc/timezone:/etc/timezone:ro
+#      - /etc/localtime:/etc/localtime:ro
     environment:
       TZ: Europe/Moscow
 #    user: 1000:1000
