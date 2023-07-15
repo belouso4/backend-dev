@@ -15,8 +15,14 @@ class CommentedResource extends JsonResource
      */
     public function toArray($request)
     {
-        $comment = $this->only('id', 'body', 'parent_id', 'user.id');
-        $comment['user'] = $this->user;
+        $comment = $this->only('id', 'body', 'parent_id');
+        $comment['user'] = [
+            'name' => $this->user->name,
+            'avatar' => [
+                'small' => Helper::getPathIfExist('avatar/small/', $this->user->avatar),
+                'original' => Helper::getPathIfExist('avatar/original/', $this->user->avatar),
+            ],
+        ];
 
         return [
             'id' => $this->post->id,
