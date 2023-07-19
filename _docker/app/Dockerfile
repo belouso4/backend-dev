@@ -27,7 +27,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install PHP extensions
 RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo_mysql mysql-client mbstring exif pcntl bcmath gd
 
 COPY ./_docker/app/php.ini /usr/local/etc/php/conf.d/php.ini
 
@@ -45,6 +45,10 @@ ARG gid=1000
 RUN groupadd -g ${gid} ${group}
 RUN useradd -u ${uid} -g ${group} -s /bin/sh -m ${user} # <--- the '-m' create a user home directory
 
+RUN php artisan view:clear
+RUN php artisan route:clear
+RUN php artisan config:cache
+RUN php artisan cache:clear
 # Switch to user
 USER ${uid}:${gid}
 
