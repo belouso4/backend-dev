@@ -4,13 +4,14 @@ services:
     container_name: api_app
     build:
       context: .
-      dockerfile: _docker/app/Dockerfile
+      dockerfile: _docker/prod/Dockerfile
 #    working_dir: /var/www
     volumes:
       - ./:/var/www
     depends_on:
-      - db
+      - mysql_db
       - redis
+      - meilisearch
     networks:
       - api-network
 
@@ -23,10 +24,14 @@ services:
     working_dir: /var/www
     volumes:
       - ./:/var/www
-      - ./_docker/prod/nginx/conf.d:/etc/nginx/conf.d
-#      - ./storage/app:/var/www/storage/app:ro
+ #     - ./_docker/prod/nginx/conf.d:/etc/nginx/conf.d
+      - ./_docker/prod/nginx/ssl/conf.d:/etc/nginx/conf.d
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - ./dhparam:/etc/ssl/certs
     ports:
       - 80:80
+      - 443:443
     depends_on:
       - app
     networks:
@@ -34,8 +39,6 @@ services:
       - client-network
 
   meilisearch:
-    user: root
-    hostname: api.itsownhouse.local
     image: getmeili/meilisearch:latest
     container_name: meilisearch
     volumes:
@@ -44,6 +47,17 @@ services:
       - 7700:7700
     environment:
       MEILI_MASTER_KEY: "masterKey"
+    networks:
+      - api-network
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - ./:/var/www
+    # command: certonly --webroot --webroot-path=/var/www --email kirill.bielousov15151515@gmail.com --agree-tos --no-eff-email --force-renewal -d itsownhouse.ru -d www.itsownhouse.ru -d api.itsownhouse.ru -d www.api.itsownhouse.ru -d meilisearch.itsownhouse.ru -d www.meilisearch.itsownhouse.ru
     depends_on:
       - web
     networks:
@@ -87,18 +101,21 @@ services:
       - api-network
     volumes:
       - redis:/data
+      - ./_docker/redis/sysctl.conf:/etc/sysctl.conf
+    command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
 
-  db:
+  mysql_db:
     image: mysql:8.0.25
-    restart: always
+    # restart: always
+    restart: unless-stopped
+    tty: true
+    container_name: mysql_db
     volumes:
       - dbdata:/var/lib/mysql
 #    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_ROOT_PASSWORD: my-secret-pw
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_USER: ${DB_USERNAME}
     ports:
       - 3306:3306
     networks:
@@ -115,6 +132,7 @@ volumes:
 networks:
   api-network:
     driver: bridge
+    name: api-network
   client-network:
     external: true
 

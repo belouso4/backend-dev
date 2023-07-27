@@ -8,6 +8,7 @@ use App\Console\Commands\MeiliSearch\ImportModelsCommand;
 use App\Console\Commands\StatusUpdate;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Jobs\UserStatusJob;
 
 class Kernel extends ConsoleKernel
 {
@@ -31,8 +32,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
-         $schedule->command('users:StatusUpdate')->everyMinute();
+//        $schedule->command('users:StatusUpdate')->everyMinute();
+        $schedule->job(new UserStatusJob)->everyMinute();
     }
 
     /**

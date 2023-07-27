@@ -26,7 +26,7 @@ return [
 
     'stateful' => explode(',', env(
     'SANCTUM_STATEFUL_DOMAINS',
-    'itsownhouse.local,api.itsownhouse.local,localhost,localhost:3000,localhost:8000,127.0.0.1,127.0.0.1:8000,::1'
+    'itsownhouse.ru,api.itsownhouse.ru,itsownhouse.local,api.itsownhouse.local,localhost,localhost:3000,localhost:8000,127.0.0.1,127.0.0.1:8000,::1'
 )),
 
     'prefix' => 'api/v1/sanctum',
