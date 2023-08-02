@@ -1,11 +1,11 @@
 version: '3.8'
 services:
   app:
-    container_name: api_app
     build:
       context: .
       dockerfile: _docker/app/Dockerfile
-#    working_dir: /var/www
+    container_name: api_app
+    restart: unless-stopped
     volumes:
       - ./:/var/www
 #      - /etc/timezone:/etc/timezone:ro
@@ -21,6 +21,7 @@ services:
   web:
     image: nginx:alpine
     container_name: api_web
+    restart: unless-stopped
 #    build:
 #      context: ./
 #      dockerfile: web.dockerfile
@@ -38,6 +39,7 @@ services:
 
   mailhog:
     image: mailhog/mailhog:latest
+    restart: unless-stopped
     logging:
       driver: 'none'
     ports:
@@ -52,7 +54,7 @@ services:
       - PMA_ARBITRARY=1
       - PMA_HOST=${DB_HOST}
       - PMA_PORT=${DB_PORT}
-    restart: always
+    restart: unless-stopped
     depends_on:
       - db
     ports:
@@ -66,6 +68,7 @@ services:
     hostname: api.itsownhouse.local
     image: getmeili/meilisearch:latest
     container_name: meilisearch
+    restart: unless-stopped
     volumes:
       - ./_docker/meilisearch/data.ms:/data.ms
     ports:
@@ -84,7 +87,7 @@ services:
     container_name: queue
     stop_signal: SIGTERM
     working_dir: /var/www/
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./:/var/www
     depends_on:
