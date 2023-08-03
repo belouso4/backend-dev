@@ -1,6 +1,7 @@
 FROM php:8.0-fpm
 
-USER root
+WORKDIR /var/www
+
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
@@ -38,4 +39,12 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
     --filename=composer \
     --install-dir=/usr/local/bin
 
-WORKDIR /var/www
+COPY . .
+
+RUN composer install --no-scripts --no-autoloader --ansi --no-interaction --no-dev
+# Optimizing Configuration loading
+RUN php artisan config:cache
+# Optimizing Route loading
+RUN php artisan route:cache
+# Optimizing View loading
+RUN php artisan view:cache

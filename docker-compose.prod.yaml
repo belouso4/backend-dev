@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: _docker/prod/Dockerfile
-#    working_dir: /var/www
+    restart: unless-stopped
     volumes:
       - ./:/var/www
     depends_on:
@@ -18,9 +18,7 @@ services:
   web:
     image: nginx:latest
     container_name: api_web
-#    build:
-#      context: ./
-#      dockerfile: web.dockerfile
+    restart: unless-stopped
     working_dir: /var/www
     volumes:
       - ./:/var/www
@@ -41,12 +39,13 @@ services:
   meilisearch:
     image: getmeili/meilisearch:latest
     container_name: meilisearch
+    restart: unless-stopped
     volumes:
       - meilisearch:/data.ms
     ports:
       - 7700:7700
-    environment:
-      MEILI_MASTER_KEY: "masterKey"
+    env_file:
+      - ./_docker/meilisearch.env
     networks:
       - api-network
 
@@ -84,7 +83,6 @@ services:
       context: .
       dockerfile: _docker/scheduler/Dockerfile
     container_name: scheduler
-    working_dir: /var/www/
     depends_on:
       - web
     volumes:
@@ -95,6 +93,7 @@ services:
   redis:
     image: redis:4.0
     container_name: app_redis
+    restart: unless-stopped
     ports:
       - '6379:6379'
     networks:
